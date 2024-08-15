@@ -1,3 +1,3 @@
 # Forekast
 
-A simple weather app for Android and iOS
+A simple weather application for Android and iOS
