@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forekast_app/presentations/favorites_page.dart';
 import 'package:forekast_app/presentations/weather_page.dart';
-import 'package:forekast_app/utils/common.dart';
+import 'package:forekast_app/utils/common_ui.dart';
 import 'package:forekast_app/utils/themes.dart';
 
 class BasePage extends StatefulWidget {
