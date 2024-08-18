@@ -4,7 +4,8 @@ import 'package:forekast_app/presentations/widgets/weather_widgets.dart';
 import 'package:forekast_app/services/weather_service.dart';
 
 class WeatherPage extends StatefulWidget {
-  const WeatherPage({super.key});
+  final String selectedCity;
+  const WeatherPage({super.key, required this.selectedCity});
 
   @override
   State<WeatherPage> createState() => _WeatherPageState();
@@ -12,18 +13,26 @@ class WeatherPage extends StatefulWidget {
 
 class _WeatherPageState extends State<WeatherPage> {
   final textController = TextEditingController();
-  // setting default search city
-  var searchCity = 'dakar';
+  String searchCity = 'oslo';
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(WeatherPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.selectedCity != widget.selectedCity) {
+      setState(() {
+        searchCity = widget.selectedCity;
+      });
+    }
+  }
 
   WeatherApi client = WeatherApi();
   Weather? data;
   DailyWeather? dailyData;
   String? country;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   Future<void> getData(String city) async {
     data = await client.getCurrentWeather(city);

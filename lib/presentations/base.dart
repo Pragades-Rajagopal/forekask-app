@@ -18,16 +18,10 @@ class _BasePageState extends State<BasePage> {
   final GlobalKey _key = GlobalKey();
   GlobalKey searchKey = GlobalKey();
   final textController = TextEditingController();
-  var searchCity = 'oslo';
+  var searchCity = '';
   BorderRadius searchBarRadius = BorderRadius.circular(30.0);
   List<String> citiesData = [];
   List<String> filteredCities = [];
-
-  // App pages as widgets
-  static final List<Widget> _widget = [
-    const WeatherPage(),
-    const FavoritesPage(),
-  ];
 
   // Appbar titles
   static final List<String> _titles = [
@@ -70,7 +64,7 @@ class _BasePageState extends State<BasePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBar(title: _titles[_currentIndex]),
+      appBar: _appBar(title: _titles[_currentIndex], index: _currentIndex),
       key: _key,
       body: PageView(
         physics: const BouncingScrollPhysics(),
@@ -80,7 +74,12 @@ class _BasePageState extends State<BasePage> {
             _currentIndex = index;
           });
         },
-        children: _widget,
+        children: [
+          WeatherPage(
+            selectedCity: searchCity,
+          ),
+          const FavoritesPage(),
+        ],
       ),
       bottomNavigationBar: Theme(
         data: bottomNavBarTheme,
@@ -106,9 +105,7 @@ class _BasePageState extends State<BasePage> {
     );
   }
 
-  AppBar _appBar({
-    title = 'forekast',
-  }) {
+  AppBar _appBar({title = 'forekast', index = 0}) {
     return AppBar(
       backgroundColor: Theme.of(context).colorScheme.background,
       title: Text(
@@ -119,21 +116,23 @@ class _BasePageState extends State<BasePage> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () {
-            _searchBottomSheet(context, _key);
-          },
-          style: const ButtonStyle(
-            padding: MaterialStatePropertyAll(
-              EdgeInsets.fromLTRB(0, 4, 18, 0),
+        if (index == 0) ...{
+          TextButton(
+            onPressed: () {
+              _searchBottomSheet(context, _key);
+            },
+            style: const ButtonStyle(
+              padding: MaterialStatePropertyAll(
+                EdgeInsets.fromLTRB(0, 4, 18, 0),
+              ),
+              splashFactory: NoSplash.splashFactory,
+              overlayColor: MaterialStatePropertyAll(Colors.transparent),
             ),
-            splashFactory: NoSplash.splashFactory,
-            overlayColor: MaterialStatePropertyAll(Colors.transparent),
+            child: const Icon(
+              Icons.search,
+            ),
           ),
-          child: const Icon(
-            Icons.search,
-          ),
-        ),
+        }
       ],
       leading: Padding(
         padding: const EdgeInsets.fromLTRB(18, 4, 0, 0),
@@ -248,38 +247,44 @@ class _BasePageState extends State<BasePage> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: filteredCities.length,
                       itemBuilder: (context, index) {
-                        return Card(
-                          color: Colors.transparent,
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 20.0,
-                            vertical: 5.0,
-                          ),
-                          shape: UnderlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .tertiary
-                                  .withOpacity(0.3),
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context, filteredCities[index]);
+                          },
+                          child: Card(
+                            color: Colors.transparent,
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 20.0,
+                              vertical: 5.0,
                             ),
-                          ),
-                          child: Container(
-                            color: Theme.of(context).colorScheme.background,
-                            padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  filteredCities[index],
-                                  style: TextStyle(
-                                    fontSize: Theme.of(context)
-                                        .textTheme
-                                        .labelSmall
-                                        ?.fontSize,
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
+                            shape: UnderlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .tertiary
+                                    .withOpacity(0.3),
+                              ),
+                            ),
+                            child: Container(
+                              color: Theme.of(context).colorScheme.background,
+                              padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    filteredCities[index],
+                                    style: TextStyle(
+                                      fontSize: Theme.of(context)
+                                          .textTheme
+                                          .labelSmall
+                                          ?.fontSize,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .secondary,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         );
@@ -292,6 +297,13 @@ class _BasePageState extends State<BasePage> {
           },
         );
       },
-    );
+    ).then((selectedCity) => {
+          if (selectedCity != null)
+            {
+              setState(() {
+                searchCity = selectedCity; // Update the selected item
+              })
+            }
+        });
   }
 }
