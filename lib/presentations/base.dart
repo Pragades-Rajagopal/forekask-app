@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:forekast_app/presentations/favorites_page.dart';
 import 'package:forekast_app/presentations/weather_page.dart';
-import 'package:forekast_app/services/cities_service.dart';
 import 'package:forekast_app/utils/common_ui.dart';
 import 'package:forekast_app/utils/themes.dart';
 
@@ -20,7 +20,6 @@ class _BasePageState extends State<BasePage> {
   final textController = TextEditingController();
   var searchCity = 'oslo';
   BorderRadius searchBarRadius = BorderRadius.circular(30.0);
-  CitiesApi cities = CitiesApi();
   List<String> citiesData = [];
   List<String> filteredCities = [];
 
@@ -47,9 +46,9 @@ class _BasePageState extends State<BasePage> {
   }
 
   Future<void> getCitiesFunc() async {
-    List<String> data = await cities.getCities();
+    List<String>? data = await CitiesData.getCities();
     setState(() {
-      citiesData.addAll(data);
+      citiesData.addAll(data!);
     });
   }
 
