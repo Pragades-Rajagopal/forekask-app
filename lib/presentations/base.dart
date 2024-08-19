@@ -107,6 +107,7 @@ class _BasePageState extends State<BasePage> {
 
   AppBar _appBar({title = 'forekast', index = 0}) {
     return AppBar(
+      elevation: 0,
       backgroundColor: Theme.of(context).colorScheme.background,
       title: Text(
         title,
@@ -134,20 +135,6 @@ class _BasePageState extends State<BasePage> {
           ),
         }
       ],
-      leading: Padding(
-        padding: const EdgeInsets.fromLTRB(18, 4, 0, 0),
-        child: IconButton(
-          tooltip: 'Settings',
-          onPressed: () {},
-          icon: const Icon(
-            Icons.settings,
-            // size: 20,
-          ),
-          alignment: Alignment.center,
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-        ),
-      ),
     );
   }
 
@@ -218,6 +205,24 @@ class _BasePageState extends State<BasePage> {
                                           Colors.transparent),
                                     ),
                                     onPressed: () {
+                                      setState(() {
+                                        textController.text = '';
+                                        filteredCities.clear();
+                                      });
+                                    },
+                                  ),
+                                  suffixIcon: IconButton(
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
+                                    icon: const Icon(Icons.search),
+                                    style: const ButtonStyle(
+                                      splashFactory: NoSplash.splashFactory,
+                                      overlayColor: MaterialStatePropertyAll(
+                                          Colors.transparent),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.pop(
+                                          context, textController.text);
                                       setState(() {
                                         textController.text = '';
                                         filteredCities.clear();

@@ -12,8 +12,14 @@ Image getSmallIcon(String icon) {
 
 SizedBox div = const SizedBox(height: 16);
 
-Widget currentWeather(Image icon, String temp, String location,
-    String description, BuildContext context) {
+Widget currentWeather(
+  Image icon,
+  String temp,
+  String location,
+  String description,
+  String country,
+  BuildContext context,
+) {
   return Center(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -42,7 +48,7 @@ Widget currentWeather(Image icon, String temp, String location,
         SizedBox(
           width: 340,
           child: Text(
-            location,
+            "$location, $country",
             style: TextStyle(
               fontSize: Theme.of(context).textTheme.labelMedium?.fontSize,
               fontWeight: FontWeight.bold,
@@ -202,9 +208,12 @@ Widget additionalInformation(
                   div,
                   Row(
                     children: [
-                      Text(
-                        pressure,
-                        style: containerInfoStyle,
+                      Expanded(
+                        child: Text(
+                          pressure,
+                          style: containerInfoStyle,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       )
                     ],
                   ),
@@ -291,7 +300,7 @@ Widget dailyForecast(List data, BuildContext context) {
             itemCount: data.length,
             itemBuilder: (context, index) {
               return Card(
-                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

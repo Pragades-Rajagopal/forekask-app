@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forekast_app/data/models/weather_model.dart';
 import 'package:forekast_app/presentations/widgets/weather_widgets.dart';
+import 'package:forekast_app/services/cities_service.dart';
 import 'package:forekast_app/services/weather_service.dart';
 
 class WeatherPage extends StatefulWidget {
@@ -12,12 +13,7 @@ class WeatherPage extends StatefulWidget {
 }
 
 class _WeatherPageState extends State<WeatherPage> {
-  final textController = TextEditingController();
   String searchCity = 'oslo';
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   void didUpdateWidget(WeatherPage oldWidget) {
@@ -29,7 +25,9 @@ class _WeatherPageState extends State<WeatherPage> {
     }
   }
 
+  final textController = TextEditingController();
   WeatherApi client = WeatherApi();
+  CitiesApi citiesApi = CitiesApi();
   Weather? data;
   DailyWeather? dailyData;
   String? country;
@@ -37,6 +35,7 @@ class _WeatherPageState extends State<WeatherPage> {
   Future<void> getData(String city) async {
     data = await client.getCurrentWeather(city);
     dailyData = await client.getDailyWeather(data?.lat, data?.lon);
+    country = await citiesApi.getCountryName('${data?.country}');
   }
 
   @override
@@ -102,8 +101,8 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
-  SingleChildScrollView weatherData(data) {
-    return SingleChildScrollView(
+  Container weatherData(data) {
+    return Container(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -113,6 +112,7 @@ class _WeatherPageState extends State<WeatherPage> {
             "${data!.temp}°C",
             "${data!.cityName}",
             "${data!.description}",
+            "$country",
             context,
           ),
           const SizedBox(
@@ -129,7 +129,7 @@ class _WeatherPageState extends State<WeatherPage> {
           additionalInformation(
             "${data!.wind}m/s ${data!.degree}",
             "${data!.humidity}%",
-            "${data!.pressure}hPa",
+            "${data!.pressure}mBar",
             "${data!.feelsLike}°C",
             "${data!.degree}",
             context,
