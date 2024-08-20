@@ -6,7 +6,7 @@ Image getIcon(String? icon) {
 }
 
 Image getSmallIcon(String icon) {
-  String url = "https://openweathermap.org/img/wn/$icon@4x.png";
+  String url = "https://openweathermap.org/img/wn/$icon@2x.png";
   return Image.network(url);
 }
 
@@ -42,9 +42,6 @@ Widget currentWeather(
             color: Theme.of(context).colorScheme.primary,
           ),
         ),
-        const SizedBox(
-          height: 10.0,
-        ),
         SizedBox(
           width: 340,
           child: Text(
@@ -65,7 +62,7 @@ Widget currentWeather(
           child: Text(
             description,
             style: TextStyle(
-              fontSize: Theme.of(context).textTheme.labelSmall?.fontSize,
+              fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
               fontWeight: FontWeight.w300,
               color: Theme.of(context).colorScheme.tertiary,
             ),
@@ -326,19 +323,21 @@ Widget dailyForecast(List data, BuildContext context) {
                         ),
                       ),
                       Expanded(
-                        flex: 2,
+                        flex: 1,
                         child: Align(
                           alignment: Alignment.centerLeft,
                           child: Container(
                             alignment: Alignment.center,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              // vertical: 20,
-                            ),
+                            // margin: const EdgeInsets.symmetric(
+                            //   horizontal: 10,
+                            // ),
                             child: SizedBox(
                               width: 80,
                               height: 80,
-                              child: getIcon(data[index]["icon"]),
+                              child: FittedBox(
+                                fit: BoxFit.cover,
+                                child: getSmallIcon(data[index]["icon"]),
+                              ),
                             ),
                           ),
                         ),

@@ -64,6 +64,7 @@ class _BasePageState extends State<BasePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       appBar: _appBar(title: _titles[_currentIndex], index: _currentIndex),
       key: _key,
       body: PageView(
@@ -93,7 +94,8 @@ class _BasePageState extends State<BasePage> {
             );
           },
           elevation: 0,
-          backgroundColor: Theme.of(context).colorScheme.background,
+          backgroundColor:
+              Theme.of(context).colorScheme.background.withOpacity(0.95),
           selectedItemColor: Theme.of(context).colorScheme.primary,
           unselectedItemColor: Theme.of(context).colorScheme.tertiary,
           iconSize: 28.0,
@@ -306,7 +308,7 @@ class _BasePageState extends State<BasePage> {
           if (selectedCity != null)
             {
               setState(() {
-                searchCity = selectedCity; // Update the selected item
+                searchCity = selectedCity;
               })
             }
         });

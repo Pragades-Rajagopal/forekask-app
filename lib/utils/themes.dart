@@ -26,7 +26,7 @@ ThemeData lightTheme = ThemeData(
     secondary: Colors.black87,
     tertiary: Color.fromARGB(255, 97, 97, 97),
     surface: Color.fromARGB(255, 78, 81, 126),
-    primaryContainer: Color.fromARGB(255, 152, 203, 227),
+    primaryContainer: Color.fromARGB(255, 148, 206, 233),
   ),
 );
 
@@ -37,13 +37,13 @@ ThemeData darkTheme = ThemeData(
     backgroundColor: Colors.black.withOpacity(0.8),
     elevation: 0,
   ),
-  colorScheme: const ColorScheme.dark(
-    background: Color(0xFF0F1026),
+  colorScheme: ColorScheme.dark(
+    background: const Color(0xFF0F1026),
     primary: Colors.white,
     secondary: Colors.white70,
-    tertiary: Color.fromRGBO(180, 180, 180, 1),
+    tertiary: const Color.fromRGBO(180, 180, 180, 1),
     surface: Colors.blueGrey,
-    primaryContainer: Color.fromARGB(255, 51, 53, 71),
+    primaryContainer: const Color.fromARGB(255, 51, 53, 71).withOpacity(0.3),
   ),
 );
 
