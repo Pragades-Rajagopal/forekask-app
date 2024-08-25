@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CitiesData {
@@ -10,5 +11,36 @@ class CitiesData {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     final list = preferences.getStringList('cities_list');
     return list;
+  }
+}
+
+class FavoritesData {
+  static Future<void> saveFavorites(List<Map<String, dynamic>> data) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final encodedData = jsonEncode(data);
+    await preferences.setString('favorites', encodedData);
+  }
+
+  static Future<List<Map<String, dynamic>>> getFavorites() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final favData = preferences.getString('favorites');
+    if (favData != null) {
+      final List<dynamic> list = jsonDecode(favData);
+      return list.cast<Map<String, dynamic>>();
+    }
+    return [];
+  }
+
+  static Future<void> removeFavorites(String city) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final favData = preferences.getString('favorites');
+    if (favData != null) {
+      final List<dynamic> list = jsonDecode(favData);
+      list
+          .cast<Map<String, dynamic>>()
+          .removeWhere((item) => item["city"] == city);
+      final encodedData = jsonEncode(list);
+      await preferences.setString('favorites', encodedData);
+    }
   }
 }

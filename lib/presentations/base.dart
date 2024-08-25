@@ -64,7 +64,7 @@ class _BasePageState extends State<BasePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
+      // extendBody: true,
       appBar: _appBar(title: _titles[_currentIndex], index: _currentIndex),
       key: _key,
       body: PageView(
@@ -257,6 +257,10 @@ class _BasePageState extends State<BasePage> {
                         return GestureDetector(
                           onTap: () {
                             Navigator.pop(context, filteredCities[index]);
+                            setState(() {
+                              filteredCities.clear();
+                              textController.text = '';
+                            });
                           },
                           child: Card(
                             color: Colors.transparent,
