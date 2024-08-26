@@ -18,7 +18,7 @@ class _BasePageState extends State<BasePage> {
   final GlobalKey _key = GlobalKey();
   GlobalKey searchKey = GlobalKey();
   final textController = TextEditingController();
-  var searchCity = '';
+  var searchCity = 'oslo';
   BorderRadius searchBarRadius = BorderRadius.circular(30.0);
   List<String> citiesData = [];
   List<String> filteredCities = [];

@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:forekast_app/data/models/weather_model.dart';
 import 'package:forekast_app/presentations/widgets/weather_widgets.dart';
 import 'package:forekast_app/services/cities_service.dart';
@@ -21,11 +19,13 @@ class _WeatherPageState extends State<WeatherPage> {
   @override
   void didUpdateWidget(WeatherPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.selectedCity != widget.selectedCity) {
+    // if (oldWidget.selectedCity != widget.selectedCity) {
+    if (mounted) {
       setState(() {
         searchCity = widget.selectedCity;
       });
     }
+    // }
   }
 
   final textController = TextEditingController();
@@ -36,17 +36,20 @@ class _WeatherPageState extends State<WeatherPage> {
   DailyWeather? dailyData;
   String? country;
   bool isFavorite = false;
+  int favoriteCount = 0;
 
   @override
   void initState() {
     super.initState();
-    initStateMethods();
+    checkFavorite(widget.selectedCity);
   }
 
-  Future<void> initStateMethods() async {
-    bool isFav = await favoriteWeather.favoriteExists(searchCity);
+  Future<void> checkFavorite(String city) async {
+    bool isFav = await favoriteWeather.favoriteExists(city);
+    int favCount = await favoriteWeather.favoritesCount();
     setState(() {
       isFavorite = isFav;
+      favoriteCount = favCount;
     });
   }
 
@@ -59,7 +62,7 @@ class _WeatherPageState extends State<WeatherPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: weatherFutureBuilder(searchCity),
+      body: weatherFutureBuilder(widget.selectedCity),
     );
   }
 
@@ -167,38 +170,43 @@ class _WeatherPageState extends State<WeatherPage> {
             height: 4.0,
           ),
           dailyForecast(dailyData!.model, context),
-          Align(
-            alignment: Alignment.centerRight,
-            child: isFavorite
-                ? Text(
-                    'added to favorites',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .surface
-                          .withOpacity(0.5),
-                      fontWeight: FontWeight.bold,
-                    ),
+          Container(
+            child: favoriteCount < 8
+                ? Align(
+                    alignment: Alignment.centerRight,
+                    child: isFavorite
+                        ? Text(
+                            'added to favorites',
+                            style: TextStyle(
+                              fontSize: 18.0,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .surface
+                                  .withOpacity(0.5),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : TextButton(
+                            onPressed: () async {
+                              await favoriteWeather
+                                  .saveFavorites(widget.selectedCity);
+                            },
+                            style: const ButtonStyle(
+                              splashFactory: NoSplash.splashFactory,
+                              overlayColor:
+                                  MaterialStatePropertyAll(Colors.transparent),
+                            ),
+                            child: Text(
+                              'add to favorites',
+                              style: TextStyle(
+                                fontSize: 18.0,
+                                color: Theme.of(context).colorScheme.surface,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                   )
-                : TextButton(
-                    onPressed: () async {
-                      await favoriteWeather.saveFavorites(searchCity);
-                    },
-                    style: const ButtonStyle(
-                      splashFactory: NoSplash.splashFactory,
-                      overlayColor:
-                          MaterialStatePropertyAll(Colors.transparent),
-                    ),
-                    child: Text(
-                      'add to favorites',
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: Theme.of(context).colorScheme.surface,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                : null,
           ),
         ],
       ),
