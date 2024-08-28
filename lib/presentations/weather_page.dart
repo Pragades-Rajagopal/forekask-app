@@ -6,7 +6,7 @@ import 'package:forekast_app/services/favorites_service.dart';
 import 'package:forekast_app/services/weather_service.dart';
 
 class WeatherPage extends StatefulWidget {
-  final String selectedCity;
+  final ValueNotifier<String> selectedCity;
   const WeatherPage({super.key, required this.selectedCity});
 
   @override
@@ -14,20 +14,6 @@ class WeatherPage extends StatefulWidget {
 }
 
 class _WeatherPageState extends State<WeatherPage> {
-  String searchCity = 'oslo';
-
-  @override
-  void didUpdateWidget(WeatherPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    // if (oldWidget.selectedCity != widget.selectedCity) {
-    if (mounted) {
-      setState(() {
-        searchCity = widget.selectedCity;
-      });
-    }
-    // }
-  }
-
   final textController = TextEditingController();
   WeatherApi client = WeatherApi();
   CitiesApi citiesApi = CitiesApi();
@@ -41,16 +27,23 @@ class _WeatherPageState extends State<WeatherPage> {
   @override
   void initState() {
     super.initState();
-    checkFavorite(widget.selectedCity);
+    widget.selectedCity.addListener(_handleCityChange);
+    checkFavorite(widget.selectedCity.value);
+  }
+
+  @override
+  void dispose() {
+    widget.selectedCity.removeListener(_handleCityChange);
+    super.dispose();
+  }
+
+  void _handleCityChange() async {
+    await checkFavorite(widget.selectedCity.value);
   }
 
   Future<void> checkFavorite(String city) async {
-    bool isFav = await favoriteWeather.favoriteExists(city);
-    int favCount = await favoriteWeather.favoritesCount();
-    setState(() {
-      isFavorite = isFav;
-      favoriteCount = favCount;
-    });
+    isFavorite = await favoriteWeather.favoriteExists(city);
+    favoriteCount = await favoriteWeather.favoritesCount();
   }
 
   Future<void> getData(String city) async {
@@ -62,7 +55,7 @@ class _WeatherPageState extends State<WeatherPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: weatherFutureBuilder(widget.selectedCity),
+      body: weatherFutureBuilder(widget.selectedCity.value),
     );
   }
 
@@ -173,7 +166,7 @@ class _WeatherPageState extends State<WeatherPage> {
           Container(
             child: favoriteCount < 8
                 ? Align(
-                    alignment: Alignment.centerRight,
+                    alignment: Alignment.center,
                     child: isFavorite
                         ? Text(
                             'added to favorites',
@@ -189,7 +182,7 @@ class _WeatherPageState extends State<WeatherPage> {
                         : TextButton(
                             onPressed: () async {
                               await favoriteWeather
-                                  .saveFavorites(widget.selectedCity);
+                                  .saveFavorites(widget.selectedCity.value);
                             },
                             style: const ButtonStyle(
                               splashFactory: NoSplash.splashFactory,

@@ -23,6 +23,8 @@ class _BasePageState extends State<BasePage> {
   List<String> citiesData = [];
   List<String> filteredCities = [];
 
+  final _weatherNotifier = ValueNotifier<String>('oslo');
+
   // Appbar titles
   static final List<String> _titles = [
     'forekast',
@@ -77,9 +79,10 @@ class _BasePageState extends State<BasePage> {
         },
         children: [
           WeatherPage(
-            selectedCity: searchCity,
+            key: ValueKey('WeatherPage$_currentIndex'),
+            selectedCity: _weatherNotifier,
           ),
-          const FavoritesPage(),
+          const FavoritesPage(key: ValueKey('FavoritesPage')),
         ],
       ),
       bottomNavigationBar: Theme(
@@ -313,8 +316,16 @@ class _BasePageState extends State<BasePage> {
             {
               setState(() {
                 searchCity = selectedCity;
+                _weatherNotifier.value = selectedCity;
               })
             }
         });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _weatherNotifier.dispose();
+    super.dispose();
   }
 }
