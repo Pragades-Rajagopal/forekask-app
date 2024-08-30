@@ -61,8 +61,6 @@ class FavoriteWeather {
   Future<bool> favoriteExists(String city_) async {
     List<Map<String, dynamic>> data = await FavoritesData.getFavorites();
     final cityData = data.any((city) {
-      // print(
-      //     '${city["city"].toString().toLowerCase()} :: ${city_.toString().toLowerCase()}');
       return city["city"].toString().toLowerCase() ==
           city_.toString().toLowerCase();
     });

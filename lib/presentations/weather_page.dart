@@ -23,6 +23,10 @@ class _WeatherPageState extends State<WeatherPage> {
   String? country;
   bool isFavorite = false;
   int favoriteCount = 0;
+  String addedFavText = 'added to favorite';
+  String addToFavText = 'add to favorite';
+  final ValueNotifier<String> favoriteButton =
+      ValueNotifier<String>('add to favorite');
 
   @override
   void initState() {
@@ -44,6 +48,7 @@ class _WeatherPageState extends State<WeatherPage> {
   Future<void> checkFavorite(String city) async {
     isFavorite = await favoriteWeather.favoriteExists(city);
     favoriteCount = await favoriteWeather.favoritesCount();
+    favoriteButton.value = isFavorite ? addedFavText : addToFavText;
   }
 
   Future<void> getData(String city) async {
@@ -163,46 +168,42 @@ class _WeatherPageState extends State<WeatherPage> {
             height: 4.0,
           ),
           dailyForecast(dailyData!.model, context),
-          Container(
-            child: favoriteCount < 8
-                ? Align(
-                    alignment: Alignment.center,
-                    child: isFavorite
-                        ? Text(
-                            'added to favorites',
-                            style: TextStyle(
-                              fontSize: 18.0,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surface
-                                  .withOpacity(0.5),
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        : TextButton(
-                            onPressed: () async {
-                              await favoriteWeather
-                                  .saveFavorites(widget.selectedCity.value);
-                            },
-                            style: const ButtonStyle(
-                              splashFactory: NoSplash.splashFactory,
-                              overlayColor:
-                                  MaterialStatePropertyAll(Colors.transparent),
-                            ),
-                            child: Text(
-                              'add to favorites',
-                              style: TextStyle(
-                                fontSize: 18.0,
-                                color: Theme.of(context).colorScheme.surface,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                  )
-                : null,
-          ),
+          addToFavButton(),
         ],
       ),
+    );
+  }
+
+  Container addToFavButton() {
+    return Container(
+      child: favoriteCount < 8
+          ? ValueListenableBuilder<String>(
+              valueListenable: favoriteButton,
+              builder: (context, buttonText, child) {
+                return TextButton(
+                    style: const ButtonStyle(
+                      splashFactory: NoSplash.splashFactory,
+                      overlayColor:
+                          MaterialStatePropertyAll(Colors.transparent),
+                    ),
+                    onPressed: () async {
+                      if (favoriteButton.value == addToFavText) {
+                        await favoriteWeather
+                            .saveFavorites(widget.selectedCity.value);
+                      }
+                      favoriteButton.value = addedFavText;
+                    },
+                    child: Text(
+                      buttonText,
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        color: Theme.of(context).colorScheme.surface,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ));
+              },
+            )
+          : null,
     );
   }
 }

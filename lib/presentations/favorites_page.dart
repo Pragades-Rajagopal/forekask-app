@@ -37,6 +37,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
     });
   }
 
+  Future<void> _setFavoriteToDefault(String city) async {
+    await FavoritesData.setFavoriteToDefault(city);
+  }
+
   Future<void> _removeFavorites(String city) async {
     await FavoritesData.removeFavorites(city);
     await _getFavoritesWeather();
@@ -150,8 +154,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 direction: DismissDirection.horizontal,
                 confirmDismiss: (direction) async {
                   if (direction == DismissDirection.startToEnd) {
-                    // set default logic
-                    print('set default');
+                    await _setFavoriteToDefault(favoritesList[index]["city"]);
                     return false;
                   }
                   final removeCity = favoritesList[index]["city"];
@@ -202,20 +205,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 child: Card(
                   margin:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  shape: favoritesList[index]["default"] == 'false'
-                      ? RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        )
-                      : RoundedRectangleBorder(
-                          side: BorderSide(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .tertiary
-                                .withOpacity(0.3),
-                            width: 2.0,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                   color: Theme.of(context).colorScheme.primaryContainer,
                   child: SafeArea(
                     child: Row(
@@ -254,7 +246,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                   Row(
                                     children: [
                                       if (favoritesList[index]["default"] ==
-                                          'true') ...{
+                                          true) ...{
                                         Expanded(
                                           child: Text(
                                             favoritesData[index]["city"],

@@ -43,4 +43,17 @@ class FavoritesData {
       await preferences.setString('favorites', encodedData);
     }
   }
+
+  static Future<void> setFavoriteToDefault(String city) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final favData = preferences.getString('favorites');
+    if (favData != null) {
+      final List<dynamic> list = jsonDecode(favData);
+      for (var city_ in list) {
+        city_["default"] = city_["city"] == city;
+      }
+      final encodedData = jsonEncode(list);
+      await preferences.setString('favorites', encodedData);
+    }
+  }
 }
