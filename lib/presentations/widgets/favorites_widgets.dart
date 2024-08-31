@@ -1,0 +1,160 @@
+import 'package:flutter/material.dart';
+import 'package:forekast_app/presentations/widgets/weather_widgets.dart';
+
+Card favoriteCardsWidget(
+  BuildContext context,
+  List<dynamic> favoritesData,
+  List<dynamic> favoritesList,
+  String temperatureUnit,
+  int index,
+) {
+  var cardDescrStyle = TextStyle(
+    fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
+    // fontWeight: FontWeight.bold,
+    color: Theme.of(context).colorScheme.secondary,
+  );
+  var cardTempStyle = TextStyle(
+    fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
+    fontWeight: FontWeight.bold,
+    color: Theme.of(context).colorScheme.secondary,
+  );
+  var cardTempStyle2 = TextStyle(
+    fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
+    fontWeight: FontWeight.bold,
+    color: Theme.of(context).colorScheme.secondary,
+  );
+  var cardCityStyle = TextStyle(
+    fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
+    fontWeight: FontWeight.bold,
+    color: Theme.of(context).colorScheme.secondary,
+  );
+  var cardCityStyleItalic = TextStyle(
+    fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
+    fontWeight: FontWeight.bold,
+    fontStyle: FontStyle.italic,
+    color: Theme.of(context).colorScheme.secondary,
+  );
+  return Card(
+    margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(10),
+    ),
+    color: Theme.of(context).colorScheme.primaryContainer,
+    child: SafeArea(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Expanded(
+            flex: 1,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                alignment: Alignment.center,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 4,
+                  // vertical: 20,
+                ),
+                child: SizedBox(
+                  width: 80,
+                  height: 80,
+                  child: getIcon(favoritesData[index]["icon"]),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 2,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                alignment: Alignment.centerRight,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 14,
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        if (favoritesList[index]["default"] == true) ...{
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    favoritesData[index]["city"],
+                                    style: cardCityStyleItalic,
+                                    softWrap: true,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.home,
+                                  color: Theme.of(context).colorScheme.surface,
+                                ),
+                              ],
+                            ),
+                          ),
+                        } else ...{
+                          Expanded(
+                            child: Text(
+                              favoritesData[index]["city"],
+                              style: cardCityStyle,
+                              softWrap: true,
+                            ),
+                          ),
+                        }
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            favoritesData[index]["description"],
+                            style: cardDescrStyle,
+                            softWrap: true,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                alignment: Alignment.center,
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            "${favoritesData[index]["temp"]}$temperatureUnit",
+                            style: cardTempStyle,
+                            softWrap: true,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          "${favoritesData[index]["tempMax"]}/${favoritesData[index]["tempMin"]}$temperatureUnit",
+                          style: cardTempStyle2,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+}

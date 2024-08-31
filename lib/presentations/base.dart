@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:forekast_app/presentations/favorites_page.dart';
+import 'package:forekast_app/presentations/settings_page.dart';
 import 'package:forekast_app/presentations/weather_page.dart';
 import 'package:forekast_app/utils/common_ui.dart';
 import 'package:forekast_app/utils/themes.dart';
+import 'package:get/get.dart';
 
 class BasePage extends StatefulWidget {
   const BasePage({super.key});
@@ -38,7 +40,20 @@ class _BasePageState extends State<BasePage> {
   }
 
   void initStateMethods() async {
+    String defaultCity = await FavoritesData.getDefaultFavorite();
+    if (defaultCity != '') {
+      setState(() {
+        _weatherNotifier.value = defaultCity;
+      });
+    }
     await getCitiesFunc();
+  }
+
+  void _updateSelectedCity(String city) {
+    setState(() {
+      _weatherNotifier.value = city;
+    });
+    _pageController.jumpToPage(0);
   }
 
   Future<void> getCitiesFunc() async {
@@ -82,7 +97,10 @@ class _BasePageState extends State<BasePage> {
             key: ValueKey('WeatherPage$_currentIndex'),
             selectedCity: _weatherNotifier,
           ),
-          const FavoritesPage(key: ValueKey('FavoritesPage')),
+          FavoritesPage(
+            key: const ValueKey('FavoritesPage'),
+            onCitySelected: _updateSelectedCity,
+          ),
         ],
       ),
       bottomNavigationBar: Theme(
@@ -121,6 +139,7 @@ class _BasePageState extends State<BasePage> {
           fontSize: 20.0,
         ),
       ),
+      centerTitle: true,
       actions: [
         if (index == 0) ...{
           TextButton(
@@ -136,6 +155,22 @@ class _BasePageState extends State<BasePage> {
             ),
             child: const Icon(
               Icons.search,
+            ),
+          ),
+        } else if (index == 1) ...{
+          TextButton(
+            onPressed: () {
+              Get.to(() => const SettingsPage());
+            },
+            style: const ButtonStyle(
+              padding: MaterialStatePropertyAll(
+                EdgeInsets.fromLTRB(0, 4, 18, 0),
+              ),
+              splashFactory: NoSplash.splashFactory,
+              overlayColor: MaterialStatePropertyAll(Colors.transparent),
+            ),
+            child: const Icon(
+              Icons.settings,
             ),
           ),
         }

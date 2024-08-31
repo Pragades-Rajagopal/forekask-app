@@ -36,9 +36,16 @@ class FavoritesData {
     final favData = preferences.getString('favorites');
     if (favData != null) {
       final List<dynamic> list = jsonDecode(favData);
+      // Remove the city from favorite
       list
           .cast<Map<String, dynamic>>()
           .removeWhere((item) => item["city"] == city);
+      // If the removed city was set to default, update the first favorite
+      // to default
+      bool wasDefault = list.any((item) => item["default"] == true);
+      if (list.isNotEmpty && !wasDefault) {
+        list.first["default"] = true;
+      }
       final encodedData = jsonEncode(list);
       await preferences.setString('favorites', encodedData);
     }
@@ -55,5 +62,39 @@ class FavoritesData {
       final encodedData = jsonEncode(list);
       await preferences.setString('favorites', encodedData);
     }
+  }
+
+  static Future<String> getDefaultFavorite() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final favData = preferences.getString('favorites');
+    if (favData != null) {
+      final List<dynamic> list = jsonDecode(favData);
+      String? city = list.firstWhere((city) => city["default"] == true,
+          orElse: () => null)?['city'];
+      return city ?? '';
+    }
+    return '';
+  }
+}
+
+class SettingsData {
+  static Future<void> storeThemePreference(String selectedTheme) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setString('selected_theme', selectedTheme);
+  }
+
+  static Future<void> storeUnitPreference(String selectedTheme) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setString('selected_unit', selectedTheme);
+  }
+
+  static Future<Map<String, dynamic>> getPreferences() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    final selectedTheme = preferences.getString('selected_theme') ?? 'light';
+    final selectedUnit = preferences.getString('selected_unit') ?? 'metric';
+    return {
+      "selectedTheme": selectedTheme,
+      "selectedUnit": selectedUnit,
+    };
   }
 }

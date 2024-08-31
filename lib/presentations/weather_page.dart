@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:forekast_app/data/models/weather_model.dart';
 import 'package:forekast_app/presentations/widgets/weather_widgets.dart';
 import 'package:forekast_app/services/cities_service.dart';
@@ -23,6 +24,8 @@ class _WeatherPageState extends State<WeatherPage> {
   String? country;
   bool isFavorite = false;
   int favoriteCount = 0;
+  String temperatureUnit = '°C';
+  String windSpeed = 'm/s';
   String addedFavText = 'added to favorite';
   String addToFavText = 'add to favorite';
   final ValueNotifier<String> favoriteButton =
@@ -55,6 +58,9 @@ class _WeatherPageState extends State<WeatherPage> {
     data = await client.getCurrentWeather(city);
     dailyData = await client.getDailyWeather(data?.lat, data?.lon);
     country = await citiesApi.getCountryName('${data?.country}');
+    Map<String, dynamic> settings = await SettingsData.getPreferences();
+    temperatureUnit = settings["selectedUnit"] == 'metric' ? '°C' : '°F';
+    windSpeed = settings["selectedUnit"] == 'metric' ? 'm/s' : 'mph';
   }
 
   @override
@@ -128,7 +134,7 @@ class _WeatherPageState extends State<WeatherPage> {
         children: [
           currentWeather(
             getIcon(data!.icon),
-            "${data!.temp}°C",
+            "${data!.temp}$temperatureUnit",
             "${data!.cityName}",
             "${data!.description}",
             "$country",
@@ -146,10 +152,10 @@ class _WeatherPageState extends State<WeatherPage> {
             ),
           ),
           additionalInformation(
-            "${data!.wind}m/s ${data!.degree}",
+            "${data!.wind}$windSpeed ${data!.degree}",
             "${data!.humidity}%",
             "${data!.pressure}mBar",
-            "${data!.feelsLike}°C",
+            "${data!.feelsLike}$temperatureUnit",
             "${data!.degree}",
             context,
           ),
@@ -167,7 +173,7 @@ class _WeatherPageState extends State<WeatherPage> {
           const SizedBox(
             height: 4.0,
           ),
-          dailyForecast(dailyData!.model, context),
+          dailyForecast(dailyData!.model, temperatureUnit, context),
           addToFavButton(),
         ],
       ),
@@ -181,26 +187,26 @@ class _WeatherPageState extends State<WeatherPage> {
               valueListenable: favoriteButton,
               builder: (context, buttonText, child) {
                 return TextButton(
-                    style: const ButtonStyle(
-                      splashFactory: NoSplash.splashFactory,
-                      overlayColor:
-                          MaterialStatePropertyAll(Colors.transparent),
+                  style: const ButtonStyle(
+                    splashFactory: NoSplash.splashFactory,
+                    overlayColor: MaterialStatePropertyAll(Colors.transparent),
+                  ),
+                  onPressed: () async {
+                    if (favoriteButton.value == addToFavText) {
+                      await favoriteWeather
+                          .saveFavorites(widget.selectedCity.value);
+                    }
+                    favoriteButton.value = addedFavText;
+                  },
+                  child: Text(
+                    buttonText,
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      color: Theme.of(context).colorScheme.surface,
+                      fontWeight: FontWeight.bold,
                     ),
-                    onPressed: () async {
-                      if (favoriteButton.value == addToFavText) {
-                        await favoriteWeather
-                            .saveFavorites(widget.selectedCity.value);
-                      }
-                      favoriteButton.value = addedFavText;
-                    },
-                    child: Text(
-                      buttonText,
-                      style: TextStyle(
-                        fontSize: 18.0,
-                        color: Theme.of(context).colorScheme.surface,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ));
+                  ),
+                );
               },
             )
           : null,

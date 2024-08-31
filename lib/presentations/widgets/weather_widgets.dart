@@ -258,7 +258,7 @@ Widget additionalInformation(
   );
 }
 
-Widget dailyForecast(List data, BuildContext context) {
+Widget dailyForecast(List data, String temperatureUnit, BuildContext context) {
   var cardDateStyle = TextStyle(
     fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
     // fontWeight: FontWeight.bold,
@@ -357,7 +357,7 @@ Widget dailyForecast(List data, BuildContext context) {
                                 Row(
                                   children: [
                                     Text(
-                                      "${data[index]["tempMax"]} / ${data[index]["tempMin"]}°C",
+                                      "${data[index]["tempMax"]} / ${data[index]["tempMin"]}$temperatureUnit",
                                       style: cardTempStyle,
                                     ),
                                   ],

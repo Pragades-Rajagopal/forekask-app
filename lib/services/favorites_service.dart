@@ -8,8 +8,9 @@ class FavoriteWeather {
   Future<SingleFavoriteWeather> getWeatherForFavoriteCity(String city) async {
     try {
       final env = await parseStringToMap(assetsFileName: '.env');
+      Map<String, dynamic> settings = await SettingsData.getPreferences();
       var url = Uri.parse(
-          'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=${env["OPENWEATHER_API_KEY_DAILY"]}&units=metric');
+          'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=${env["OPENWEATHER_API_KEY_DAILY"]}&units=${settings["selectedUnit"]}');
       var response = await http.get(url);
       var body = jsonDecode(response.body);
       SingleFavoriteWeather weather = SingleFavoriteWeather.fromJSON(body);

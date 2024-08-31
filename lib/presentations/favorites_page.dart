@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:forekast_app/data/local_storage/local_data.dart';
-import 'package:forekast_app/presentations/widgets/weather_widgets.dart';
+import 'package:forekast_app/presentations/widgets/favorites_widgets.dart';
 import 'package:forekast_app/services/favorites_service.dart';
 
 class FavoritesPage extends StatefulWidget {
-  const FavoritesPage({super.key});
+  final Function(String) onCitySelected;
+  const FavoritesPage({
+    super.key,
+    required this.onCitySelected,
+  });
 
   @override
   State<FavoritesPage> createState() => _FavoritesPageState();
@@ -14,6 +18,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
   List<dynamic> favoritesList = [];
   List<dynamic> favoritesData = [];
   List<String> favoriteCities = [];
+  String temperatureUnit = '°C';
   late Future _favoritesWeatherFuture;
   // Services
   FavoriteWeather favoritesApi = FavoriteWeather();
@@ -25,11 +30,12 @@ class _FavoritesPageState extends State<FavoritesPage> {
   }
 
   Future<void> _getFavoritesWeather() async {
-    // await FavoritesData.saveFavorites();
+    Map<String, dynamic> settings = await SettingsData.getPreferences();
     List<Map<String, dynamic>> data = await FavoritesData.getFavorites();
     List<String> cities = data.map((city) => city["city"].toString()).toList();
     final weatherData = await favoritesApi.getWeatherForAllFavorites(cities);
     setState(() {
+      temperatureUnit = settings["selectedUnit"] == 'metric' ? '°C' : '°F';
       favoritesList.clear();
       favoritesData.clear();
       favoritesList.addAll(data);
@@ -112,32 +118,15 @@ class _FavoritesPageState extends State<FavoritesPage> {
   }
 
   Container favoriteCards(List<dynamic> favoritesData) {
-    var cardDescrStyle = TextStyle(
-      fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
-      // fontWeight: FontWeight.bold,
-      color: Theme.of(context).colorScheme.secondary,
-    );
-    var cardTempStyle = TextStyle(
-      fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
-      fontWeight: FontWeight.bold,
-      color: Theme.of(context).colorScheme.secondary,
-    );
-    var cardTempStyle2 = TextStyle(
-      fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
-      fontWeight: FontWeight.bold,
-      color: Theme.of(context).colorScheme.secondary,
-    );
-    var cardCityStyle = TextStyle(
-      fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
-      fontWeight: FontWeight.bold,
-      color: Theme.of(context).colorScheme.secondary,
-    );
-    var cardCityStyleItalic = TextStyle(
-      fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
-      fontWeight: FontWeight.bold,
-      fontStyle: FontStyle.italic,
-      color: Theme.of(context).colorScheme.secondary,
-    );
+    void updateFavoriteCard(int setDefaultIndex, int prevDefaultIndex) {
+      setState(() {
+        favoritesList[setDefaultIndex]["default"] = true;
+        if (prevDefaultIndex != -1) {
+          favoritesList[prevDefaultIndex]["default"] = false;
+        }
+      });
+    }
+
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 20),
       width: 400.0,
@@ -154,7 +143,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 direction: DismissDirection.horizontal,
                 confirmDismiss: (direction) async {
                   if (direction == DismissDirection.startToEnd) {
+                    if (favoritesList[index]["default"] == true) return false;
                     await _setFavoriteToDefault(favoritesList[index]["city"]);
+                    int prevDefaultIndex = favoritesList
+                        .indexWhere((city) => city["default"] == true);
+                    updateFavoriteCard(index, prevDefaultIndex);
                     return false;
                   }
                   final removeCity = favoritesList[index]["city"];
@@ -202,119 +195,16 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     ],
                   ),
                 ),
-                child: Card(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  child: SafeArea(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Container(
-                              alignment: Alignment.center,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 4,
-                                // vertical: 20,
-                              ),
-                              child: SizedBox(
-                                width: 80,
-                                height: 80,
-                                child: getIcon(favoritesData[index]["icon"]),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Container(
-                              alignment: Alignment.centerRight,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 14,
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      if (favoritesList[index]["default"] ==
-                                          true) ...{
-                                        Expanded(
-                                          child: Text(
-                                            favoritesData[index]["city"],
-                                            style: cardCityStyleItalic,
-                                            softWrap: true,
-                                          ),
-                                        ),
-                                      } else ...{
-                                        Expanded(
-                                          child: Text(
-                                            favoritesData[index]["city"],
-                                            style: cardCityStyle,
-                                            softWrap: true,
-                                          ),
-                                        ),
-                                      }
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          favoritesData[index]["description"],
-                                          style: cardDescrStyle,
-                                          softWrap: true,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Container(
-                              alignment: Alignment.center,
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          "${favoritesData[index]["temp"]}°C",
-                                          style: cardTempStyle,
-                                          softWrap: true,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "${favoritesData[index]["tempMax"]}/${favoritesData[index]["tempMin"]}°C",
-                                        style: cardTempStyle2,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                child: GestureDetector(
+                  onTap: () {
+                    widget.onCitySelected(favoritesData[index]["city"]);
+                  },
+                  child: favoriteCardsWidget(
+                    context,
+                    favoritesData,
+                    favoritesList,
+                    temperatureUnit,
+                    index,
                   ),
                 ),
               );

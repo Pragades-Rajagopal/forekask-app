@@ -5,12 +5,16 @@ import 'package:forekast_app/services/cities_service.dart';
 import 'package:forekast_app/utils/themes.dart';
 import 'package:get/route_manager.dart';
 
+String? theme;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Store cities
   CitiesApi cities = CitiesApi();
   List<String> data = await cities.getCities();
   await CitiesData.storeCities(data);
+  final appSettings = await SettingsData.getPreferences();
+  theme = appSettings["selectedTheme"];
 
   runApp(const MyApp());
 }
@@ -24,7 +28,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: lightTheme,
       darkTheme: darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: theme == 'light' ? ThemeMode.light : ThemeMode.dark,
       home: const BasePage(),
     );
   }
