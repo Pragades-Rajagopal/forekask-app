@@ -3,6 +3,7 @@ import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:forekast_app/presentations/favorites_page.dart';
 import 'package:forekast_app/presentations/settings_page.dart';
 import 'package:forekast_app/presentations/weather_page.dart';
+import 'package:forekast_app/services/location_service.dart';
 import 'package:forekast_app/utils/common_ui.dart';
 import 'package:forekast_app/utils/themes.dart';
 import 'package:get/get.dart';
@@ -21,6 +22,7 @@ class _BasePageState extends State<BasePage> {
   GlobalKey searchKey = GlobalKey();
   final textController = TextEditingController();
   var searchCity = 'oslo';
+  var currentLocation = '';
   BorderRadius searchBarRadius = BorderRadius.circular(30.0);
   List<String> citiesData = [];
   List<String> filteredCities = [];
@@ -36,17 +38,27 @@ class _BasePageState extends State<BasePage> {
   @override
   void initState() {
     super.initState();
-    initStateMethods();
+    getLocation();
   }
 
-  void initStateMethods() async {
-    String defaultCity = await FavoritesData.getDefaultFavorite();
-    if (defaultCity != '') {
-      setState(() {
-        _weatherNotifier.value = defaultCity;
-      });
-    }
+  Future<void> getLocation() async {
     await getCitiesFunc();
+    final location = await LocationService.getCurrentLocation();
+    final currentCity = await LocationService.getAddressFromLatLng(
+        location.latitude, location.longitude);
+    if (currentCity != '' || currentCity != null) {
+      setState(() {
+        _weatherNotifier.value = currentCity ?? searchCity;
+        currentLocation = currentCity!;
+      });
+    } else {
+      String defaultCity = await FavoritesData.getDefaultFavorite();
+      if (defaultCity != '') {
+        setState(() {
+          _weatherNotifier.value = defaultCity;
+        });
+      }
+    }
   }
 
   void _updateSelectedCity(String city) {
@@ -100,6 +112,7 @@ class _BasePageState extends State<BasePage> {
           FavoritesPage(
             key: const ValueKey('FavoritesPage'),
             onCitySelected: _updateSelectedCity,
+            currentLocation: currentLocation,
           ),
         ],
       ),

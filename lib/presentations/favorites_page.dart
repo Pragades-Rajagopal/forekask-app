@@ -5,9 +5,11 @@ import 'package:forekast_app/services/favorites_service.dart';
 
 class FavoritesPage extends StatefulWidget {
   final Function(String) onCitySelected;
+  final String currentLocation;
   const FavoritesPage({
     super.key,
     required this.onCitySelected,
+    required this.currentLocation,
   });
 
   @override
@@ -34,6 +36,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
     List<Map<String, dynamic>> data = await FavoritesData.getFavorites();
     List<String> cities = data.map((city) => city["city"].toString()).toList();
     final weatherData = await favoritesApi.getWeatherForAllFavorites(cities);
+
     setState(() {
       temperatureUnit = settings["selectedUnit"] == 'metric' ? '°C' : '°F';
       favoritesList.clear();
