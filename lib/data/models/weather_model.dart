@@ -3,6 +3,8 @@ import 'package:forekast_app/utils/common_function.dart';
 class Weather {
   String? cityName;
   int? temp;
+  int? tempMax;
+  int? tempMin;
   int? wind;
   int? humidity;
   int? feelsLike;
@@ -17,6 +19,8 @@ class Weather {
   Weather({
     this.cityName,
     this.temp,
+    this.tempMax,
+    this.tempMin,
     this.wind,
     this.humidity,
     this.pressure,
@@ -34,6 +38,8 @@ class Weather {
   Weather.fromJSON(Map<String, dynamic> json) {
     cityName = json["name"];
     temp = roundTempValue(json["main"]["temp"]);
+    tempMax = roundTempValue(json["main"]["temp_max"]);
+    tempMin = roundTempValue(json["main"]["temp_min"]);
     wind = (json["wind"]["speed"]).round();
     humidity = json["main"]["humidity"];
     pressure = json["main"]["pressure"];

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:forekast_app/data/local_storage/local_data.dart';
+import 'package:forekast_app/data/models/weather_model.dart';
 import 'package:forekast_app/presentations/widgets/favorites_widgets.dart';
 import 'package:forekast_app/services/favorites_service.dart';
+import 'package:forekast_app/services/weather_service.dart';
 
 class FavoritesPage extends StatefulWidget {
   final Function(String) onCitySelected;
@@ -24,6 +26,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
   late Future _favoritesWeatherFuture;
   // Services
   FavoriteWeather favoritesApi = FavoriteWeather();
+  WeatherApi weatherApi = WeatherApi();
+  Weather? currentLocationWeather;
 
   @override
   void initState() {
@@ -36,6 +40,13 @@ class _FavoritesPageState extends State<FavoritesPage> {
     List<Map<String, dynamic>> data = await FavoritesData.getFavorites();
     List<String> cities = data.map((city) => city["city"].toString()).toList();
     final weatherData = await favoritesApi.getWeatherForAllFavorites(cities);
+    if (widget.currentLocation.isNotEmpty) {
+      Weather currentLocationWeather_ =
+          await weatherApi.getCurrentWeather(widget.currentLocation);
+      setState(() {
+        currentLocationWeather = currentLocationWeather_;
+      });
+    }
 
     setState(() {
       temperatureUnit = settings["selectedUnit"] == 'metric' ? '°C' : '°F';
@@ -83,7 +94,31 @@ class _FavoritesPageState extends State<FavoritesPage> {
               physics: const BouncingScrollPhysics(),
               child: Center(
                 child: Column(
-                  children: [favoriteCards(favoritesData)],
+                  children: [
+                    if (currentLocationWeather!.cityName != null) ...{
+                      GestureDetector(
+                        onTap: () {
+                          widget.onCitySelected(
+                              currentLocationWeather!.cityName!);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.fromLTRB(12, 8, 12, 20),
+                          width: 400.0,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              currentLocationCardWidget(
+                                context,
+                                currentLocationWeather,
+                                temperatureUnit,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    },
+                    favoriteCards(favoritesData),
+                  ],
                 ),
               ),
             );
@@ -107,6 +142,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
             ),
           );
         } catch (e) {
+          print(e);
           return Center(
             child: Text(
               'Something went wrong',
