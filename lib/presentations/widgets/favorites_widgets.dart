@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:forekast_app/data/models/weather_model.dart';
 import 'package:forekast_app/presentations/widgets/weather_widgets.dart';
 
 Card favoriteCardsWidget(
@@ -162,7 +161,7 @@ Card favoriteCardsWidget(
 
 Card currentLocationCardWidget(
   BuildContext context,
-  Weather? data,
+  Map<String, dynamic> data,
   String temperatureUnit,
 ) {
   var cardDescrStyle = TextStyle(
@@ -208,7 +207,7 @@ Card currentLocationCardWidget(
                 child: SizedBox(
                   width: 80,
                   height: 80,
-                  child: getIcon(data!.icon),
+                  child: getIcon(data["icon"]),
                 ),
               ),
             ),
@@ -229,7 +228,7 @@ Card currentLocationCardWidget(
                       children: [
                         Expanded(
                           child: Text(
-                            data.cityName!,
+                            data["city"],
                             style: cardCityStyle,
                             softWrap: true,
                           ),
@@ -240,7 +239,7 @@ Card currentLocationCardWidget(
                       children: [
                         Expanded(
                           child: Text(
-                            data.description!,
+                            data["description"],
                             style: cardDescrStyle,
                             softWrap: true,
                           ),
@@ -264,7 +263,7 @@ Card currentLocationCardWidget(
                       children: [
                         Expanded(
                           child: Text(
-                            "${data.temp}$temperatureUnit",
+                            "${data["temp"]}$temperatureUnit",
                             style: cardTempStyle,
                             softWrap: true,
                           ),
@@ -274,7 +273,7 @@ Card currentLocationCardWidget(
                     Row(
                       children: [
                         Text(
-                          "${data.tempMax}/${data.tempMin}$temperatureUnit",
+                          "${data["tempMax"]}/${data["tempMin"]}$temperatureUnit",
                           style: cardTempStyle2,
                         ),
                       ],

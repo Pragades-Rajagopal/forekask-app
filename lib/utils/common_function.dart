@@ -46,7 +46,7 @@ String? getMonth(int month) {
 /// getDirection
 /// Converts degree to direction like N, NE, ...
 String? getDirection(int degree) {
-  if (degree == 0) {
+  if (degree >= 0 && degree <= 45) {
     return 'N';
   } else {
     const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];

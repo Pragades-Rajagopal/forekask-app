@@ -40,12 +40,12 @@ class FavoritesData {
       list
           .cast<Map<String, dynamic>>()
           .removeWhere((item) => item["city"] == city);
-      // If the removed city was set to default, update the first favorite
-      // to default
-      bool wasDefault = list.any((item) => item["default"] == true);
-      if (list.isNotEmpty && !wasDefault) {
-        list.first["default"] = true;
-      }
+      // // If the removed city was set to default, update the first favorite
+      // // to default
+      // bool wasDefault = list.any((item) => item["default"] == true);
+      // if (list.isNotEmpty && !wasDefault) {
+      //   list.first["default"] = true;
+      // }
       final encodedData = jsonEncode(list);
       await preferences.setString('favorites', encodedData);
     }
@@ -57,7 +57,10 @@ class FavoritesData {
     if (favData != null) {
       final List<dynamic> list = jsonDecode(favData);
       for (var city_ in list) {
-        city_["default"] = city_["city"] == city;
+        // city_["default"] = city_["city"] == city;
+        if (city_["city"] == city) {
+          city_["default"] = city_["default"] == true ? false : true;
+        }
       }
       final encodedData = jsonEncode(list);
       await preferences.setString('favorites', encodedData);

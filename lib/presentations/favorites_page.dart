@@ -27,7 +27,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
   // Services
   FavoriteWeather favoritesApi = FavoriteWeather();
   WeatherApi weatherApi = WeatherApi();
-  Weather? currentLocationWeather;
+  Map<String, dynamic> currentLocationWeather = {};
 
   @override
   void initState() {
@@ -44,10 +44,15 @@ class _FavoritesPageState extends State<FavoritesPage> {
       Weather currentLocationWeather_ =
           await weatherApi.getCurrentWeather(widget.currentLocation);
       setState(() {
-        currentLocationWeather = currentLocationWeather_;
+        currentLocationWeather["city"] = currentLocationWeather_.cityName;
+        currentLocationWeather["temp"] = currentLocationWeather_.temp;
+        currentLocationWeather["tempMax"] = currentLocationWeather_.tempMax;
+        currentLocationWeather["tempMin"] = currentLocationWeather_.tempMin;
+        currentLocationWeather["icon"] = currentLocationWeather_.icon;
+        currentLocationWeather["description"] =
+            currentLocationWeather_.description;
       });
     }
-
     setState(() {
       temperatureUnit = settings["selectedUnit"] == 'metric' ? '°C' : '°F';
       favoritesList.clear();
@@ -81,12 +86,18 @@ class _FavoritesPageState extends State<FavoritesPage> {
           if (snapshot.connectionState == ConnectionState.done) {
             if (favoritesData.isEmpty) {
               return Center(
-                child: Text(
-                  "It's empty!\nAdd favorites by searching a city",
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.tertiary,
-                  ),
-                  textAlign: TextAlign.center,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    currentLocationWeatherCard(context),
+                    Text(
+                      "It's empty!\nAdd favorites by searching a city",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.tertiary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
                 ),
               );
             }
@@ -95,28 +106,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
               child: Center(
                 child: Column(
                   children: [
-                    if (currentLocationWeather!.cityName != null) ...{
-                      GestureDetector(
-                        onTap: () {
-                          widget.onCitySelected(
-                              currentLocationWeather!.cityName!);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.fromLTRB(12, 8, 12, 20),
-                          width: 400.0,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              currentLocationCardWidget(
-                                context,
-                                currentLocationWeather,
-                                temperatureUnit,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    },
+                    currentLocationWeatherCard(context),
                     favoriteCards(favoritesData),
                   ],
                 ),
@@ -142,7 +132,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
             ),
           );
         } catch (e) {
-          print(e);
           return Center(
             child: Text(
               'Something went wrong',
@@ -154,6 +143,32 @@ class _FavoritesPageState extends State<FavoritesPage> {
         }
       },
     );
+  }
+
+  Widget currentLocationWeatherCard(BuildContext context) {
+    if (currentLocationWeather["city"] != null) {
+      return GestureDetector(
+        onTap: () {
+          widget.onCitySelected(currentLocationWeather["city"]);
+        },
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 20),
+          width: 400.0,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              currentLocationCardWidget(
+                context,
+                currentLocationWeather,
+                temperatureUnit,
+              ),
+            ],
+          ),
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 
   Container favoriteCards(List<dynamic> favoritesData) {
@@ -182,7 +197,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 direction: DismissDirection.horizontal,
                 confirmDismiss: (direction) async {
                   if (direction == DismissDirection.startToEnd) {
-                    if (favoritesList[index]["default"] == true) return false;
+                    // if (favoritesList[index]["default"] == true) return false;
                     await _setFavoriteToDefault(favoritesList[index]["city"]);
                     int prevDefaultIndex = favoritesList
                         .indexWhere((city) => city["default"] == true);

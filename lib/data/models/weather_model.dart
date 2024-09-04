@@ -50,7 +50,6 @@ class Weather {
     lat = json["coord"]["lat"];
     lon = json["coord"]["lon"];
     degree = getDirection(json["wind"]["deg"]);
-    // degree = json["wind"]["deg"];
   }
 
   // Function to return json when unknown city is searched

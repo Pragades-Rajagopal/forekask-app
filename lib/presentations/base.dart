@@ -46,18 +46,18 @@ class _BasePageState extends State<BasePage> {
     final location = await LocationService.getCurrentLocation();
     final currentCity = await LocationService.getAddressFromLatLng(
         location.latitude, location.longitude);
-    if (currentCity != '' || currentCity != null) {
+    setState(() {
+      currentLocation = currentCity!;
+    });
+    String defaultCity = await FavoritesData.getDefaultFavorite();
+    if (defaultCity != '') {
+      setState(() {
+        _weatherNotifier.value = defaultCity;
+      });
+    } else if (currentCity != '' || currentCity != null) {
       setState(() {
         _weatherNotifier.value = currentCity ?? searchCity;
-        currentLocation = currentCity!;
       });
-    } else {
-      String defaultCity = await FavoritesData.getDefaultFavorite();
-      if (defaultCity != '') {
-        setState(() {
-          _weatherNotifier.value = defaultCity;
-        });
-      }
     }
   }
 
