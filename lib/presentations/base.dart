@@ -38,7 +38,11 @@ class _BasePageState extends State<BasePage> {
   @override
   void initState() {
     super.initState();
-    getLocation();
+    initStateMethods();
+  }
+
+  void initStateMethods() async {
+    await getLocation();
   }
 
   Future<void> getLocation() async {
@@ -119,6 +123,7 @@ class _BasePageState extends State<BasePage> {
       bottomNavigationBar: Theme(
         data: bottomNavBarTheme,
         child: BottomNavigationBar(
+          landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
           currentIndex: _currentIndex,
           onTap: (int index) {
             _pageController.animateToPage(
@@ -133,8 +138,8 @@ class _BasePageState extends State<BasePage> {
           selectedItemColor: Theme.of(context).colorScheme.primary,
           unselectedItemColor: Theme.of(context).colorScheme.tertiary,
           iconSize: 28.0,
-          selectedFontSize: 14.0,
-          unselectedFontSize: 14.0,
+          selectedFontSize: 0,
+          unselectedFontSize: 0,
           items: bottomNavBarItems,
         ),
       ),
@@ -167,7 +172,7 @@ class _BasePageState extends State<BasePage> {
               overlayColor: MaterialStatePropertyAll(Colors.transparent),
             ),
             child: const Icon(
-              Icons.search,
+              Icons.search_outlined,
             ),
           ),
         } else if (index == 1) ...{

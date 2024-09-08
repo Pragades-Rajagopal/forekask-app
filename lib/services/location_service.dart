@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
@@ -13,7 +14,11 @@ class LocationService {
     permission = await Geolocator.checkPermission();
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
-      Get.snackbar('Warning', 'Location permission denied');
+      Get.snackbar(
+        'Warning',
+        'Location permission denied',
+        icon: const Icon(Icons.location_disabled_sharp),
+      );
       return Future.error('Location permissions are denied');
     }
     if (permission == LocationPermission.deniedForever) {

@@ -27,7 +27,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
   // Services
   FavoriteWeather favoritesApi = FavoriteWeather();
   WeatherApi weatherApi = WeatherApi();
-  Map<String, dynamic> currentLocationWeather = {};
+  Map<String, dynamic> currentLocationWeatherData = {};
 
   @override
   void initState() {
@@ -44,12 +44,12 @@ class _FavoritesPageState extends State<FavoritesPage> {
       Weather currentLocationWeather_ =
           await weatherApi.getCurrentWeather(widget.currentLocation);
       setState(() {
-        currentLocationWeather["city"] = currentLocationWeather_.cityName;
-        currentLocationWeather["temp"] = currentLocationWeather_.temp;
-        currentLocationWeather["tempMax"] = currentLocationWeather_.tempMax;
-        currentLocationWeather["tempMin"] = currentLocationWeather_.tempMin;
-        currentLocationWeather["icon"] = currentLocationWeather_.icon;
-        currentLocationWeather["description"] =
+        currentLocationWeatherData["city"] = currentLocationWeather_.cityName;
+        currentLocationWeatherData["temp"] = currentLocationWeather_.temp;
+        currentLocationWeatherData["tempMax"] = currentLocationWeather_.tempMax;
+        currentLocationWeatherData["tempMin"] = currentLocationWeather_.tempMin;
+        currentLocationWeatherData["icon"] = currentLocationWeather_.icon;
+        currentLocationWeatherData["description"] =
             currentLocationWeather_.description;
       });
     }
@@ -89,7 +89,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    currentLocationWeatherCard(context),
+                    currentLocationWeatherCard(
+                      context,
+                      currentLocationWeatherData,
+                    ),
                     Text(
                       "It's empty!\nAdd favorites by searching a city",
                       style: TextStyle(
@@ -106,7 +109,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
               child: Center(
                 child: Column(
                   children: [
-                    currentLocationWeatherCard(context),
+                    currentLocationWeatherCard(
+                      context,
+                      currentLocationWeatherData,
+                    ),
                     favoriteCards(favoritesData),
                   ],
                 ),
@@ -145,7 +151,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
     );
   }
 
-  Widget currentLocationWeatherCard(BuildContext context) {
+  Widget currentLocationWeatherCard(
+    BuildContext context,
+    Map<String, dynamic> currentLocationWeather,
+  ) {
     if (currentLocationWeather["city"] != null) {
       return GestureDetector(
         onTap: () {

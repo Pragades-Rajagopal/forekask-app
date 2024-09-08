@@ -57,9 +57,10 @@ class FavoritesData {
     if (favData != null) {
       final List<dynamic> list = jsonDecode(favData);
       for (var city_ in list) {
-        // city_["default"] = city_["city"] == city;
         if (city_["city"] == city) {
           city_["default"] = city_["default"] == true ? false : true;
+        } else if (city_["city"] != city) {
+          city_["default"] = false;
         }
       }
       final encodedData = jsonEncode(list);
