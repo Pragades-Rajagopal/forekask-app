@@ -43,8 +43,12 @@ class _FavoritesPageState extends State<FavoritesPage> {
     if (widget.currentLocation.isNotEmpty) {
       Weather currentLocationWeather_ =
           await weatherApi.getCurrentWeather(widget.currentLocation);
+      print(currentLocationWeather_.cityName!.isEmpty);
       setState(() {
-        currentLocationWeatherData["city"] = currentLocationWeather_.cityName;
+        currentLocationWeatherData["city"] =
+            currentLocationWeather_.cityName!.isEmpty
+                ? ''
+                : currentLocationWeather_.cityName;
         currentLocationWeatherData["temp"] = currentLocationWeather_.temp;
         currentLocationWeatherData["tempMax"] = currentLocationWeather_.tempMax;
         currentLocationWeatherData["tempMin"] = currentLocationWeather_.tempMin;
@@ -89,10 +93,12 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    currentLocationWeatherCard(
-                      context,
-                      currentLocationWeatherData,
-                    ),
+                    if (currentLocationWeatherData["city"] != '') ...{
+                      currentLocationWeatherCard(
+                        context,
+                        currentLocationWeatherData,
+                      )
+                    },
                     Text(
                       "It's empty!\nAdd favorites by searching a city",
                       style: TextStyle(
@@ -109,10 +115,12 @@ class _FavoritesPageState extends State<FavoritesPage> {
               child: Center(
                 child: Column(
                   children: [
-                    currentLocationWeatherCard(
-                      context,
-                      currentLocationWeatherData,
-                    ),
+                    if (currentLocationWeatherData["city"] != '') ...{
+                      currentLocationWeatherCard(
+                        context,
+                        currentLocationWeatherData,
+                      )
+                    },
                     favoriteCards(favoritesData),
                   ],
                 ),

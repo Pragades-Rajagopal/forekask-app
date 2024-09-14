@@ -79,7 +79,7 @@ class _WeatherPageState extends State<WeatherPage> {
             if (data?.cityName == '') {
               return Center(
                 child: Text(
-                  "Oops! \nWeather info not available.\nPlease search for another city.",
+                  "Oops! \nWeather info not available\nfor city '${widget.selectedCity.value}'.\nPlease search for another city.",
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.tertiary,
                   ),
