@@ -147,7 +147,7 @@ class _WeatherPageState extends State<WeatherPage> {
             'additional information',
             style: TextStyle(
               fontSize: 18.0,
-              color: Theme.of(context).colorScheme.surface,
+              color: Theme.of(context).colorScheme.tertiary,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -166,7 +166,7 @@ class _WeatherPageState extends State<WeatherPage> {
             'daily forecast',
             style: TextStyle(
               fontSize: 18.0,
-              color: Theme.of(context).colorScheme.surface,
+              color: Theme.of(context).colorScheme.tertiary,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -189,7 +189,7 @@ class _WeatherPageState extends State<WeatherPage> {
                 return TextButton(
                   style: const ButtonStyle(
                     splashFactory: NoSplash.splashFactory,
-                    overlayColor: MaterialStatePropertyAll(Colors.transparent),
+                    overlayColor: WidgetStatePropertyAll(Colors.transparent),
                   ),
                   onPressed: () async {
                     if (favoriteButton.value == addToFavText) {
@@ -202,7 +202,7 @@ class _WeatherPageState extends State<WeatherPage> {
                     buttonText,
                     style: TextStyle(
                       fontSize: 18.0,
-                      color: Theme.of(context).colorScheme.surface,
+                      color: Theme.of(context).colorScheme.tertiary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

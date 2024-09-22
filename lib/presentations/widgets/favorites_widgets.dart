@@ -89,7 +89,7 @@ Card favoriteCardsWidget(
                                 ),
                                 Icon(
                                   Icons.home,
-                                  color: Theme.of(context).colorScheme.surface,
+                                  color: Theme.of(context).colorScheme.tertiary,
                                 ),
                               ],
                             ),

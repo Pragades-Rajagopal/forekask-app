@@ -43,7 +43,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
     if (widget.currentLocation.isNotEmpty) {
       Weather currentLocationWeather_ =
           await weatherApi.getCurrentWeather(widget.currentLocation);
-      print(currentLocationWeather_.cityName!.isEmpty);
       setState(() {
         currentLocationWeatherData["city"] =
             currentLocationWeather_.cityName!.isEmpty

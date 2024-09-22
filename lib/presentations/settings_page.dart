@@ -40,7 +40,7 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         automaticallyImplyLeading: true,
         elevation: 0,
-        backgroundColor: Theme.of(context).colorScheme.background,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         title: const Text(
           'settings',
           style: TextStyle(

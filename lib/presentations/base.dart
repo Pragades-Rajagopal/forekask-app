@@ -134,7 +134,7 @@ class _BasePageState extends State<BasePage> {
           },
           elevation: 0,
           backgroundColor:
-              Theme.of(context).colorScheme.background.withOpacity(0.95),
+              Theme.of(context).colorScheme.surface.withOpacity(0.95),
           selectedItemColor: Theme.of(context).colorScheme.primary,
           unselectedItemColor: Theme.of(context).colorScheme.tertiary,
           iconSize: 28.0,
@@ -149,7 +149,7 @@ class _BasePageState extends State<BasePage> {
   AppBar _appBar({title = 'forekast', index = 0}) {
     return AppBar(
       elevation: 0,
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       title: Text(
         title,
         style: const TextStyle(
@@ -165,11 +165,11 @@ class _BasePageState extends State<BasePage> {
               _searchBottomSheet(context, _key);
             },
             style: const ButtonStyle(
-              padding: MaterialStatePropertyAll(
+              padding: WidgetStatePropertyAll(
                 EdgeInsets.fromLTRB(0, 4, 18, 0),
               ),
               splashFactory: NoSplash.splashFactory,
-              overlayColor: MaterialStatePropertyAll(Colors.transparent),
+              overlayColor: WidgetStatePropertyAll(Colors.transparent),
             ),
             child: const Icon(
               Icons.search_outlined,
@@ -181,11 +181,11 @@ class _BasePageState extends State<BasePage> {
               Get.to(() => const SettingsPage());
             },
             style: const ButtonStyle(
-              padding: MaterialStatePropertyAll(
+              padding: WidgetStatePropertyAll(
                 EdgeInsets.fromLTRB(0, 4, 18, 0),
               ),
               splashFactory: NoSplash.splashFactory,
-              overlayColor: MaterialStatePropertyAll(Colors.transparent),
+              overlayColor: WidgetStatePropertyAll(Colors.transparent),
             ),
             child: const Icon(
               Icons.settings,
@@ -200,7 +200,7 @@ class _BasePageState extends State<BasePage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       elevation: 0.0,
       showDragHandle: true,
       shape: const RoundedRectangleBorder(
@@ -259,7 +259,7 @@ class _BasePageState extends State<BasePage> {
                                     icon: const Icon(Icons.clear),
                                     style: const ButtonStyle(
                                       splashFactory: NoSplash.splashFactory,
-                                      overlayColor: MaterialStatePropertyAll(
+                                      overlayColor: WidgetStatePropertyAll(
                                           Colors.transparent),
                                     ),
                                     onPressed: () {
@@ -275,7 +275,7 @@ class _BasePageState extends State<BasePage> {
                                     icon: const Icon(Icons.search),
                                     style: const ButtonStyle(
                                       splashFactory: NoSplash.splashFactory,
-                                      overlayColor: MaterialStatePropertyAll(
+                                      overlayColor: WidgetStatePropertyAll(
                                           Colors.transparent),
                                     ),
                                     onPressed: () {
@@ -333,7 +333,7 @@ class _BasePageState extends State<BasePage> {
                               ),
                             ),
                             child: Container(
-                              color: Theme.of(context).colorScheme.background,
+                              color: Theme.of(context).colorScheme.surface,
                               padding: const EdgeInsets.fromLTRB(0, 8, 0, 8),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
