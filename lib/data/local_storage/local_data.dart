@@ -82,11 +82,6 @@ class FavoritesData {
 }
 
 class SettingsData {
-  static Future<void> storeThemePreference(String selectedTheme) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.setString('selected_theme', selectedTheme);
-  }
-
   static Future<void> storeUnitPreference(String selectedTheme) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.setString('selected_unit', selectedTheme);
@@ -94,10 +89,8 @@ class SettingsData {
 
   static Future<Map<String, dynamic>> getPreferences() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    final selectedTheme = preferences.getString('selected_theme') ?? 'light';
     final selectedUnit = preferences.getString('selected_unit') ?? 'metric';
     return {
-      "selectedTheme": selectedTheme,
       "selectedUnit": selectedUnit,
     };
   }

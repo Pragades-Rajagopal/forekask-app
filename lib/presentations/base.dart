@@ -47,7 +47,7 @@ class _BasePageState extends State<BasePage> {
 
   Future<void> getLocation() async {
     await getCitiesFunc();
-    final location = await LocationService.getCurrentLocation();
+    final location = await LocationService.getCurrentLocation(context);
     final currentCity = await LocationService.getAddressFromLatLng(
         location.latitude, location.longitude);
     setState(() {

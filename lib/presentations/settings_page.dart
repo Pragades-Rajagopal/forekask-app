@@ -1,3 +1,4 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:forekast_app/data/local_storage/local_data.dart';
 
@@ -28,8 +29,10 @@ class _SettingsPageState extends State<SettingsPage> {
 
   void initStateMethods() async {
     final appSettings = await SettingsData.getPreferences();
+    final savedThemeMode = await AdaptiveTheme.getThemeMode();
     setState(() {
-      selectedTheme = appSettings["selectedTheme"];
+      selectedTheme =
+          savedThemeMode == AdaptiveThemeMode.light ? themes[0] : themes[1];
       selectedUnit = appSettings["selectedUnit"];
     });
   }
@@ -84,7 +87,12 @@ class _SettingsPageState extends State<SettingsPage> {
                         ),
                         value: selectedTheme,
                         onChanged: (String? newTheme) async {
-                          await SettingsData.storeThemePreference(newTheme!);
+                          // await SettingsData.storeThemePreference(newTheme!);
+                          if (newTheme == 'light') {
+                            AdaptiveTheme.of(context).setLight();
+                          } else {
+                            AdaptiveTheme.of(context).setDark();
+                          }
                         },
                         items: themes.map((String value) {
                           return DropdownMenuItem<String>(

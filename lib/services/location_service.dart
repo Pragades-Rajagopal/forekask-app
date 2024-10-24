@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
 
 class LocationService {
-  static Future<Position> getCurrentLocation() async {
+  static Future<Position> getCurrentLocation(BuildContext context) async {
     bool serviceEnabled;
     LocationPermission permission;
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -14,15 +13,38 @@ class LocationService {
     permission = await Geolocator.checkPermission();
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
-      Get.snackbar(
-        'Warning',
-        'Location permission denied',
-        icon: const Icon(Icons.location_disabled_sharp),
-      );
+      // Get.snackbar(
+      //   'Warning',
+      //   'Location permission denied',
+      //   icon: const Icon(Icons.location_disabled_sharp),
+      // );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Location permission denied',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+              ),
+            ),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
       return Future.error('Location permissions are denied');
     }
     if (permission == LocationPermission.deniedForever) {
-      Get.snackbar('Warning', 'Location permission denied permanently');
+      // Get.snackbar('Warning', 'Location permission denied permanently');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Location permission denied permanently',
+            ),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      }
       return Future.error(
           'Location permissions are permanently denied, we cannot request permissions.');
     }

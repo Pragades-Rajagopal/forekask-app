@@ -1,6 +1,8 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:forekast_app/presentations/base.dart';
+import 'package:forekast_app/presentations/landing_page.dart';
 import 'package:forekast_app/services/cities_service.dart';
 import 'package:forekast_app/utils/themes.dart';
 import 'package:get/route_manager.dart';
@@ -13,23 +15,33 @@ Future<void> main() async {
   CitiesApi cities = CitiesApi();
   List<String> data = await cities.getCities();
   await CitiesData.storeCities(data);
-  final appSettings = await SettingsData.getPreferences();
-  theme = appSettings["selectedTheme"];
+  // Theming
+  final savedThemeMode = await AdaptiveTheme.getThemeMode();
+  runApp(MyApp(
+    savedThemeMode: savedThemeMode,
+  ));
 
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final AdaptiveThemeMode? savedThemeMode;
+  const MyApp({super.key, this.savedThemeMode});
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: lightTheme,
-      darkTheme: darkTheme,
-      themeMode: theme == 'light' ? ThemeMode.light : ThemeMode.dark,
-      home: const BasePage(),
+    return AdaptiveTheme(
+      light: lightTheme,
+      dark: darkTheme,
+      initial: savedThemeMode ?? AdaptiveThemeMode.light,
+      builder: (light, dark) {
+        return GetMaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: light,
+          darkTheme: dark,
+          home: const LandingPage(),
+        );
+      },
     );
   }
 }
