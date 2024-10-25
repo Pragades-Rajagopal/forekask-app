@@ -2,6 +2,16 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CitiesData {
+  static Future<void> storeDefaultCity(String city) async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.setString('default_city', city);
+  }
+
+  static Future<String?> getDefaultCity() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    return preferences.getString('default_city');
+  }
+
   static Future<void> storeCities(List<String> data) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.setStringList('cities_list', data);

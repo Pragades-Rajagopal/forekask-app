@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:forekast_app/data/local_storage/local_data.dart';
+import 'package:forekast_app/presentations/base.dart';
+import 'package:forekast_app/presentations/widgets/cities_search_sheet.dart';
 import 'package:forekast_app/services/location_service.dart';
+import 'package:get/get.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -11,21 +15,9 @@ class LandingPage extends StatefulWidget {
 class _LandingPageState extends State<LandingPage> {
   Future<void> getLocation() async {
     final location = await LocationService.getCurrentLocation(context);
-    // final currentCity = await LocationService.getAddressFromLatLng(
-    //     location.latitude, location.longitude);
-    // setState(() {
-    //   currentLocation = currentCity!;
-    // });
-    // String defaultCity = await FavoritesData.getDefaultFavorite();
-    // if (defaultCity != '') {
-    //   setState(() {
-    //     _weatherNotifier.value = defaultCity;
-    //   });
-    // } else if (currentCity != '' || currentCity != null) {
-    //   setState(() {
-    //     _weatherNotifier.value = currentCity ?? searchCity;
-    //   });
-    // }
+    final currentCity = await LocationService.getAddressFromLatLng(
+        location.latitude, location.longitude);
+    await CitiesData.storeDefaultCity(currentCity!);
   }
 
   @override
@@ -58,6 +50,7 @@ class _LandingPageState extends State<LandingPage> {
                 GestureDetector(
                   onTap: () async {
                     await getLocation();
+                    Get.to(() => const BasePage());
                   },
                   child: Container(
                     width: 300,
@@ -82,7 +75,7 @@ class _LandingPageState extends State<LandingPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 30.0),
+                const SizedBox(height: 12.0),
                 SizedBox(
                   width: 300,
                   child: Divider(
@@ -90,49 +83,10 @@ class _LandingPageState extends State<LandingPage> {
                     color: Theme.of(context).colorScheme.tertiary,
                   ),
                 ),
-                const SizedBox(height: 30.0),
-                SizedBox(
-                  width: 300,
-                  child: TextField(
-                    // controller: widget.controller,
-
-                    decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.only(
-                          top: 10.0,
-                          bottom: 10.0,
-                          left: 12.0,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .tertiary
-                                .withOpacity(0.3),
-                            width: 2,
-                          ),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(100.0)),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .tertiary
-                                .withOpacity(0.3),
-                            width: 2.0,
-                          ),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(100.0)),
-                        ),
-                        fillColor: Colors.transparent,
-                        filled: true,
-                        focusColor: Theme.of(context).colorScheme.surfaceBright,
-                        hintStyle: TextStyle(
-                          color: Theme.of(context).colorScheme.tertiary,
-                        ),
-                        hintText: 'search city manually'),
-                    cursorColor: Theme.of(context).colorScheme.primary,
-                  ),
+                const SizedBox(height: 12.0),
+                CitiesSearchSheet(
+                  usageType: 'landing_page',
+                  onValueChanged: (String _) {},
                 ),
               ],
             ),

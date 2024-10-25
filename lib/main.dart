@@ -7,26 +7,30 @@ import 'package:forekast_app/services/cities_service.dart';
 import 'package:forekast_app/utils/themes.dart';
 import 'package:get/route_manager.dart';
 
-String? theme;
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Store cities
   CitiesApi cities = CitiesApi();
   List<String> data = await cities.getCities();
   await CitiesData.storeCities(data);
+  // Get default/ current location
+  final defaultLocation = await CitiesData.getDefaultCity() ?? '';
   // Theming
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
   runApp(MyApp(
     savedThemeMode: savedThemeMode,
+    defaultLocation: defaultLocation,
   ));
-
-  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   final AdaptiveThemeMode? savedThemeMode;
-  const MyApp({super.key, this.savedThemeMode});
+  final String defaultLocation;
+  const MyApp({
+    super.key,
+    this.savedThemeMode,
+    required this.defaultLocation,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +43,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: light,
           darkTheme: dark,
-          home: const LandingPage(),
+          home: defaultLocation == '' ? const LandingPage() : const BasePage(),
         );
       },
     );
