@@ -99,7 +99,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                       )
                     },
                     Text(
-                      "It's empty!\nAdd favorites by searching a city",
+                      "no favorites added yet!",
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.tertiary,
                       ),
@@ -120,6 +120,14 @@ class _FavoritesPageState extends State<FavoritesPage> {
                         currentLocationWeatherData,
                       )
                     },
+                    Text(
+                      "favorites",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.tertiary,
+                        fontSize:
+                            Theme.of(context).textTheme.titleSmall!.fontSize,
+                      ),
+                    ),
                     favoriteCards(favoritesData),
                   ],
                 ),

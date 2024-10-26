@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:forekast_app/data/models/weather_model.dart';
@@ -26,10 +27,20 @@ class _WeatherPageState extends State<WeatherPage> {
   int favoriteCount = 0;
   String temperatureUnit = '°C';
   String windSpeed = 'm/s';
-  String addedFavText = 'added to favorite';
-  String addToFavText = 'add to favorite';
-  final ValueNotifier<String> favoriteButton =
-      ValueNotifier<String>('add to favorite');
+  Icon addedFavText = const Icon(
+    CupertinoIcons.heart_fill,
+    color: Colors.red,
+    size: 28.0,
+  );
+  Icon addToFavText = const Icon(
+    CupertinoIcons.heart,
+    color: Color(0xFFFA877F),
+    size: 28.0,
+  );
+  final ValueNotifier<Icon> favoriteButton = ValueNotifier<Icon>(const Icon(
+    CupertinoIcons.heart,
+    color: Colors.grey,
+  ));
 
   @override
   void initState() {
@@ -128,7 +139,7 @@ class _WeatherPageState extends State<WeatherPage> {
 
   Container weatherData(data) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(12, 8, 12, 20),
+      padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -174,6 +185,9 @@ class _WeatherPageState extends State<WeatherPage> {
             height: 4.0,
           ),
           dailyForecast(dailyData!.model, temperatureUnit, context),
+          const SizedBox(
+            height: 8.0,
+          ),
           addToFavButton(),
         ],
       ),
@@ -182,11 +196,15 @@ class _WeatherPageState extends State<WeatherPage> {
 
   Container addToFavButton() {
     return Container(
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+        color: Theme.of(context).colorScheme.tertiary.withOpacity(0.1),
+      ),
       child: favoriteCount < 8
-          ? ValueListenableBuilder<String>(
+          ? ValueListenableBuilder<Icon>(
               valueListenable: favoriteButton,
-              builder: (context, buttonText, child) {
-                return TextButton(
+              builder: (context, icon, child) {
+                return IconButton(
                   style: const ButtonStyle(
                     splashFactory: NoSplash.splashFactory,
                     overlayColor: WidgetStatePropertyAll(Colors.transparent),
@@ -198,14 +216,7 @@ class _WeatherPageState extends State<WeatherPage> {
                     }
                     favoriteButton.value = addedFavText;
                   },
-                  child: Text(
-                    buttonText,
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      color: Theme.of(context).colorScheme.tertiary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  icon: icon,
                 );
               },
             )

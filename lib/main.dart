@@ -11,10 +11,11 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // Store cities
   CitiesApi cities = CitiesApi();
+  CitiesData citiesData = CitiesData();
   List<String> data = await cities.getCities();
-  await CitiesData.storeCities(data);
+  await citiesData.storeCities(data);
   // Get default/ current location
-  final defaultLocation = await CitiesData.getDefaultCity() ?? '';
+  final defaultLocation = await citiesData.getDefaultCity() ?? '';
   // Theming
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
   runApp(MyApp(

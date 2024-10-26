@@ -21,11 +21,12 @@ ThemeData lightTheme = ThemeData(
     elevation: 0,
   ),
   colorScheme: const ColorScheme.light(
-    surface: Color.fromARGB(255, 163, 222, 249),
+    surface: Color(0xFFA3DEF9),
     primary: Colors.black,
     secondary: Colors.black87,
     tertiary: Color.fromARGB(255, 97, 97, 97),
     primaryContainer: Color.fromARGB(255, 148, 206, 233),
+    secondaryContainer: Color(0xFFE0E0E0),
   ),
 );
 
@@ -42,6 +43,7 @@ ThemeData darkTheme = ThemeData(
     secondary: Colors.white70,
     tertiary: const Color.fromRGBO(180, 180, 180, 1),
     primaryContainer: const Color.fromARGB(255, 51, 53, 71).withOpacity(0.3),
+    secondaryContainer: Colors.grey[900],
   ),
 );
 

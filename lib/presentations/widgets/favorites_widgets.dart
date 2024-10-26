@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forekast_app/presentations/widgets/weather_widgets.dart';
 
@@ -88,8 +89,9 @@ Card favoriteCardsWidget(
                                   ),
                                 ),
                                 Icon(
-                                  Icons.home,
-                                  color: Theme.of(context).colorScheme.tertiary,
+                                  CupertinoIcons.house_alt_fill,
+                                  color:
+                                      Theme.of(context).colorScheme.secondary,
                                 ),
                               ],
                             ),
@@ -227,10 +229,20 @@ Card currentLocationCardWidget(
                     Row(
                       children: [
                         Expanded(
-                          child: Text(
-                            data["city"],
-                            style: cardCityStyle,
-                            softWrap: true,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  data["city"],
+                                  style: cardCityStyle,
+                                  softWrap: true,
+                                ),
+                              ),
+                              Icon(
+                                CupertinoIcons.location_fill,
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ],
                           ),
                         ),
                       ],

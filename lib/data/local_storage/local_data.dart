@@ -2,25 +2,42 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CitiesData {
-  static Future<void> storeDefaultCity(String city) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.setString('default_city', city);
+  static final CitiesData instance = CitiesData.internal();
+  static SharedPreferences? preferences;
+
+  CitiesData.internal();
+
+  factory CitiesData() {
+    return instance;
   }
 
-  static Future<String?> getDefaultCity() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    return preferences.getString('default_city');
+  Future<void> _init() async {
+    preferences ??= await SharedPreferences.getInstance();
   }
 
-  static Future<void> storeCities(List<String> data) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.setStringList('cities_list', data);
+  Future<void> storeDefaultCity(String city) async {
+    await _init();
+    await preferences!.setString('default_city', city);
   }
 
-  static Future<List<String>?> getCities() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    final list = preferences.getStringList('cities_list');
-    return list;
+  Future<String?> getDefaultCity() async {
+    await _init();
+    return preferences!.getString('default_city');
+  }
+
+  Future<void> removeDefaultCity() async {
+    await _init();
+    await preferences!.remove('default_city');
+  }
+
+  Future<void> storeCities(List<String> data) async {
+    await _init();
+    await preferences!.setStringList('cities_list', data);
+  }
+
+  Future<List<String>?> getCities() async {
+    await _init();
+    return preferences!.getStringList('cities_list');
   }
 }
 

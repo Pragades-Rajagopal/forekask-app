@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:forekast_app/presentations/favorites_page.dart';
@@ -25,6 +26,7 @@ class _BasePageState extends State<BasePage> {
   BorderRadius searchBarRadius = BorderRadius.circular(30.0);
   List<String> citiesData = [];
   List<String> filteredCities = [];
+  CitiesData citiesDataModel = CitiesData();
 
   final _weatherNotifier = ValueNotifier<String>('');
 
@@ -45,7 +47,7 @@ class _BasePageState extends State<BasePage> {
   }
 
   Future<void> getLocation() async {
-    final defaultLocation = await CitiesData.getDefaultCity();
+    final defaultLocation = await citiesDataModel.getDefaultCity();
     // Current/ default location to be shown in favorites page
     setState(() {
       currentLocation = defaultLocation!;
@@ -72,7 +74,6 @@ class _BasePageState extends State<BasePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // extendBody: true,
       appBar: _appBar(title: _titles[_currentIndex], index: _currentIndex),
       key: _key,
       body: PageView(
@@ -153,7 +154,7 @@ class _BasePageState extends State<BasePage> {
               overlayColor: WidgetStatePropertyAll(Colors.transparent),
             ),
             child: const Icon(
-              Icons.settings,
+              CupertinoIcons.gear_solid,
             ),
           ),
         }

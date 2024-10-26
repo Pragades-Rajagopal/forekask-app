@@ -1,7 +1,9 @@
+import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:forekast_app/presentations/base.dart';
 import 'package:forekast_app/presentations/widgets/cities_search_sheet.dart';
+import 'package:forekast_app/presentations/widgets/gesture_button.dart';
 import 'package:forekast_app/services/location_service.dart';
 import 'package:get/get.dart';
 
@@ -13,17 +15,22 @@ class LandingPage extends StatefulWidget {
 }
 
 class _LandingPageState extends State<LandingPage> {
+  CitiesData citiesData = CitiesData();
+  IconData themeIcon = Icons.dark_mode;
+
   Future<void> getLocation() async {
     final location = await LocationService.getCurrentLocation(context);
     final currentCity = await LocationService.getAddressFromLatLng(
         location.latitude, location.longitude);
-    await CitiesData.storeDefaultCity(currentCity!);
+    await citiesData.storeDefaultCity(currentCity!);
+    Get.offAll(() => const BasePage());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: _appBar(context),
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -36,54 +43,23 @@ class _LandingPageState extends State<LandingPage> {
                   height: 96.0,
                   child: CircleAvatar(
                     foregroundImage: AssetImage('assets/app_icon.png'),
+                    backgroundColor: Colors.transparent,
                   ),
                 ),
                 const SizedBox(height: 30.0),
                 Text(
                   'forekast',
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 24.0,
-                  ),
+                      color: Theme.of(context).colorScheme.primary,
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 30.0),
-                GestureDetector(
-                  onTap: () async {
-                    await getLocation();
-                    Get.to(() => const BasePage());
-                  },
-                  child: Container(
-                    width: 300,
-                    padding: const EdgeInsets.all(14.0),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .tertiary
-                          .withOpacity(0.2),
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(100.0),
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'allow location',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
+                GestureButton(
+                  onTap: () async => await getLocation(),
+                  buttonText: 'allow device location',
                 ),
-                const SizedBox(height: 12.0),
-                SizedBox(
-                  width: 300,
-                  child: Divider(
-                    height: 10,
-                    color: Theme.of(context).colorScheme.tertiary,
-                  ),
-                ),
-                const SizedBox(height: 12.0),
+                const SizedBox(height: 24.0),
                 CitiesSearchSheet(
                   usageType: 'landing_page',
                   onValueChanged: (String _) {},
@@ -93,6 +69,33 @@ class _LandingPageState extends State<LandingPage> {
           ),
         ),
       ),
+    );
+  }
+
+  AppBar _appBar(BuildContext context) {
+    return AppBar(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      actions: [
+        TextButton(
+          onPressed: () {
+            if (AdaptiveTheme.of(context).mode.isLight) {
+              AdaptiveTheme.of(context).setDark();
+              setState(() => themeIcon = Icons.wb_sunny);
+            } else {
+              AdaptiveTheme.of(context).setLight();
+              setState(() => themeIcon = Icons.dark_mode);
+            }
+          },
+          style: const ButtonStyle(
+            padding: WidgetStatePropertyAll(
+              EdgeInsets.fromLTRB(0, 4, 18, 0),
+            ),
+            splashFactory: NoSplash.splashFactory,
+            overlayColor: WidgetStatePropertyAll(Colors.transparent),
+          ),
+          child: Icon(themeIcon),
+        ),
+      ],
     );
   }
 }

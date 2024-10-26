@@ -1,6 +1,10 @@
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:forekast_app/data/local_storage/local_data.dart';
+import 'package:forekast_app/presentations/landing_page.dart';
+import 'package:forekast_app/presentations/widgets/dropdown_bar.dart';
+import 'package:forekast_app/presentations/widgets/gesture_button.dart';
+import 'package:get/get.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -10,6 +14,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  CitiesData citiesData = CitiesData();
   String selectedTheme = 'light';
   String selectedUnit = 'metric';
   List<String> themes = [
@@ -35,6 +40,18 @@ class _SettingsPageState extends State<SettingsPage> {
           savedThemeMode == AdaptiveThemeMode.light ? themes[0] : themes[1];
       selectedUnit = appSettings["selectedUnit"];
     });
+  }
+
+  void themeOnChanged(String? newTheme) async {
+    if (newTheme == 'light') {
+      AdaptiveTheme.of(context).setLight();
+    } else {
+      AdaptiveTheme.of(context).setDark();
+    }
+  }
+
+  void unitOnChanged(String? newUnit) async {
+    await SettingsData.storeUnitPreference(newUnit!);
   }
 
   @override
@@ -69,100 +86,65 @@ class _SettingsPageState extends State<SettingsPage> {
                       fontSize: 18.0,
                     ),
                   ),
-                  const SizedBox(
-                    height: 8,
-                  ),
+                  const SizedBox(height: 8),
                   SizedBox(
                     width: 280.0,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(4, 0, 8, 4),
-                      child: DropdownButtonFormField(
-                        elevation: 2,
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.fromLTRB(8, 0, 8, 4),
-                        ),
-                        value: selectedTheme,
-                        onChanged: (String? newTheme) async {
-                          // await SettingsData.storeThemePreference(newTheme!);
-                          if (newTheme == 'light') {
-                            AdaptiveTheme.of(context).setLight();
-                          } else {
-                            AdaptiveTheme.of(context).setDark();
-                          }
-                        },
-                        items: themes.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        icon: Icon(
-                          Icons.arrow_drop_down_sharp,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 28.0,
-                        ),
+                      child: DropdownBar(
+                        selectedValue: selectedTheme,
+                        items: themes,
+                        onChanged: themeOnChanged,
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 14,
-                  ),
-                  Text(
-                    'close the app and reopen to apply the selected theme!',
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 28.0,
-                  ),
+                  const SizedBox(height: 28.0),
                   const Text(
                     'units',
                     style: TextStyle(
                       fontSize: 18.0,
                     ),
                   ),
-                  const SizedBox(
-                    height: 8,
-                  ),
+                  const SizedBox(height: 8),
                   SizedBox(
                     width: 280.0,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(4, 0, 8, 4),
-                      child: DropdownButtonFormField(
-                        elevation: 2,
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.fromLTRB(8, 0, 8, 4),
-                        ),
-                        value: selectedUnit,
-                        onChanged: (String? newUnit) async {
-                          await SettingsData.storeUnitPreference(newUnit!);
-                        },
-                        items: units.map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        icon: Icon(
-                          Icons.arrow_drop_down_sharp,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 28.0,
-                        ),
+                      child: DropdownBar(
+                        selectedValue: selectedUnit,
+                        items: units,
+                        onChanged: unitOnChanged,
                       ),
                     ),
                   ),
-                  const SizedBox(
-                    height: 22.0,
+                  const Padding(
+                    padding: EdgeInsets.only(top: 14, bottom: 14),
+                    child: Divider(
+                      thickness: 0.5,
+                    ),
+                  ),
+                  const Text(
+                    'reset current location',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'This will reset the current location from the app. If the weather information is not available for your current location, you can choose the nearest location manually',
+                    style: TextStyle(
+                        fontSize: 14.0,
+                        color: Theme.of(context).colorScheme.tertiary),
+                  ),
+                  const SizedBox(height: 18),
+                  Center(
+                    child: GestureButton(
+                      onTap: () async {
+                        await citiesData.removeDefaultCity();
+                        Get.offAll(() => const LandingPage());
+                      },
+                      buttonText: 'reset location',
+                    ),
                   ),
                 ],
               ),

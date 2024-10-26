@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:forekast_app/presentations/base.dart';
@@ -17,6 +18,7 @@ class CitiesSearchSheet extends StatefulWidget {
 }
 
 class CitiesSearchSheetState extends State<CitiesSearchSheet> {
+  CitiesData citiesDataModel = CitiesData();
   GlobalKey searchKey = GlobalKey();
   final textController = TextEditingController();
   List<String> citiesData = [];
@@ -33,7 +35,7 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
   }
 
   Future<void> getCitiesFunc() async {
-    List<String>? data = await CitiesData.getCities();
+    List<String>? data = await citiesDataModel.getCities();
     setState(() {
       citiesData.addAll(data!);
     });
@@ -102,7 +104,9 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: searchBarRadius,
                                     borderSide: const BorderSide(
-                                        width: 0.0, color: Colors.transparent),
+                                      width: 0.0,
+                                      color: Colors.transparent,
+                                    ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: searchBarRadius,
@@ -112,10 +116,11 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
                                   ),
                                   filled: true,
                                   fillColor: Colors.white12,
-                                  prefixIcon: IconButton(
+                                  suffixIcon: IconButton(
                                     color:
                                         Theme.of(context).colorScheme.secondary,
-                                    icon: const Icon(Icons.clear),
+                                    icon:
+                                        const Icon(CupertinoIcons.delete_left),
                                     style: const ButtonStyle(
                                       splashFactory: NoSplash.splashFactory,
                                       overlayColor: WidgetStatePropertyAll(
@@ -128,7 +133,7 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
                                       });
                                     },
                                   ),
-                                  suffixIcon: IconButton(
+                                  prefixIcon: IconButton(
                                     color:
                                         Theme.of(context).colorScheme.secondary,
                                     icon: const Icon(Icons.search),
@@ -225,9 +230,9 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
       },
     ).then((selectedCity) async {
       if (selectedCity != null && widget.usageType == 'landing_page') {
-        await CitiesData.storeDefaultCity(selectedCity);
-        Get.to(() => const BasePage());
-      } else {
+        await citiesDataModel.storeDefaultCity(selectedCity);
+        Get.offAll(() => const BasePage());
+      } else if (selectedCity != null) {
         setState(() {
           widget.onValueChanged(selectedCity);
         });
@@ -275,7 +280,7 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
           overlayColor: WidgetStatePropertyAll(Colors.transparent),
         ),
         child: const Icon(
-          Icons.search_outlined,
+          CupertinoIcons.globe,
         ),
       );
     }
