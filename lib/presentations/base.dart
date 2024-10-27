@@ -27,6 +27,7 @@ class _BasePageState extends State<BasePage> {
   List<String> citiesData = [];
   List<String> filteredCities = [];
   CitiesData citiesDataModel = CitiesData();
+  FavoritesData favoritesData = FavoritesData();
 
   final _weatherNotifier = ValueNotifier<String>('');
 
@@ -52,7 +53,7 @@ class _BasePageState extends State<BasePage> {
     setState(() {
       currentLocation = defaultLocation!;
     });
-    String defaultCity = await FavoritesData.getDefaultFavorite();
+    String defaultCity = await favoritesData.getDefaultFavorite();
     if (defaultCity != '') {
       setState(() {
         _weatherNotifier.value = defaultCity;

@@ -42,15 +42,26 @@ class CitiesData {
 }
 
 class FavoritesData {
-  static Future<void> saveFavorites(List<Map<String, dynamic>> data) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    final encodedData = jsonEncode(data);
-    await preferences.setString('favorites', encodedData);
+  static final FavoritesData instance = FavoritesData.internal();
+  static SharedPreferences? preferences;
+
+  FavoritesData.internal();
+
+  factory FavoritesData() => instance;
+
+  Future<void> _init() async {
+    preferences ??= await SharedPreferences.getInstance();
   }
 
-  static Future<List<Map<String, dynamic>>> getFavorites() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    final favData = preferences.getString('favorites');
+  Future<void> saveFavorites(List<Map<String, dynamic>> data) async {
+    await _init();
+    final encodedData = jsonEncode(data);
+    await preferences?.setString('favorites', encodedData);
+  }
+
+  Future<List<Map<String, dynamic>>> getFavorites() async {
+    await _init();
+    final favData = preferences?.getString('favorites');
     if (favData != null) {
       final List<dynamic> list = jsonDecode(favData);
       return list.cast<Map<String, dynamic>>();
@@ -58,9 +69,9 @@ class FavoritesData {
     return [];
   }
 
-  static Future<void> removeFavorites(String city) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    final favData = preferences.getString('favorites');
+  Future<void> removeFavorites(String city) async {
+    await _init();
+    final favData = preferences?.getString('favorites');
     if (favData != null) {
       final List<dynamic> list = jsonDecode(favData);
       // Remove the city from favorite
@@ -74,13 +85,13 @@ class FavoritesData {
       //   list.first["default"] = true;
       // }
       final encodedData = jsonEncode(list);
-      await preferences.setString('favorites', encodedData);
+      await preferences?.setString('favorites', encodedData);
     }
   }
 
-  static Future<void> setFavoriteToDefault(String city) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    final favData = preferences.getString('favorites');
+  Future<void> setFavoriteToDefault(String city) async {
+    await _init();
+    final favData = preferences?.getString('favorites');
     if (favData != null) {
       final List<dynamic> list = jsonDecode(favData);
       for (var city_ in list) {
@@ -91,13 +102,13 @@ class FavoritesData {
         }
       }
       final encodedData = jsonEncode(list);
-      await preferences.setString('favorites', encodedData);
+      await preferences?.setString('favorites', encodedData);
     }
   }
 
-  static Future<String> getDefaultFavorite() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    final favData = preferences.getString('favorites');
+  Future<String> getDefaultFavorite() async {
+    await _init();
+    final favData = preferences?.getString('favorites');
     if (favData != null) {
       final List<dynamic> list = jsonDecode(favData);
       String? city = list.firstWhere((city) => city["default"] == true,
@@ -109,14 +120,25 @@ class FavoritesData {
 }
 
 class SettingsData {
-  static Future<void> storeUnitPreference(String selectedTheme) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    await preferences.setString('selected_unit', selectedTheme);
+  static final SettingsData instance = SettingsData.internal();
+  static SharedPreferences? preferences;
+
+  SettingsData.internal();
+
+  factory SettingsData() => instance;
+
+  Future<void> _init() async {
+    preferences ??= await SharedPreferences.getInstance();
   }
 
-  static Future<Map<String, dynamic>> getPreferences() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    final selectedUnit = preferences.getString('selected_unit') ?? 'metric';
+  Future<void> storeUnitPreference(String selectedTheme) async {
+    await _init();
+    await preferences?.setString('selected_unit', selectedTheme);
+  }
+
+  Future<Map<String, dynamic>> getPreferences() async {
+    await _init();
+    final selectedUnit = preferences?.getString('selected_unit') ?? 'metric';
     return {
       "selectedUnit": selectedUnit,
     };

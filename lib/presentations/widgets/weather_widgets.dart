@@ -18,6 +18,7 @@ Widget currentWeather(
   String location,
   String description,
   String country,
+  String timestamp,
   BuildContext context,
 ) {
   return Center(
@@ -63,6 +64,21 @@ Widget currentWeather(
             description,
             style: TextStyle(
               fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
+              fontWeight: FontWeight.w300,
+              color: Theme.of(context).colorScheme.tertiary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
+        const SizedBox(
+          height: 4.0,
+        ),
+        SizedBox(
+          width: 340,
+          child: Text(
+            timestamp,
+            style: TextStyle(
+              fontSize: Theme.of(context).textTheme.titleSmall?.fontSize,
               fontWeight: FontWeight.w300,
               color: Theme.of(context).colorScheme.tertiary,
             ),

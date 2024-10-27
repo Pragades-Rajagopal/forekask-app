@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:forekast_app/presentations/widgets/common_widgets.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -8,27 +9,19 @@ class LocationService {
     LocationPermission permission;
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          CommonWidgets.mySnackBar(context, 'Location services are disabled'),
+        );
+      }
+      return Future.error('Location services are disabled');
     }
     permission = await Geolocator.checkPermission();
     permission = await Geolocator.requestPermission();
     if (permission == LocationPermission.denied) {
-      // Get.snackbar(
-      //   'Warning',
-      //   'Location permission denied',
-      //   icon: const Icon(Icons.location_disabled_sharp),
-      // );
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Location permission denied',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-            duration: const Duration(seconds: 3),
-          ),
+          CommonWidgets.mySnackBar(context, 'Location permission denied'),
         );
       }
       return Future.error('Location permissions are denied');
@@ -37,12 +30,8 @@ class LocationService {
       // Get.snackbar('Warning', 'Location permission denied permanently');
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Location permission denied permanently',
-            ),
-            duration: Duration(seconds: 3),
-          ),
+          CommonWidgets.mySnackBar(
+              context, 'Location permission denied permanently'),
         );
       }
       return Future.error(

@@ -2,6 +2,7 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:forekast_app/presentations/landing_page.dart';
+import 'package:forekast_app/presentations/widgets/common_widgets.dart';
 import 'package:forekast_app/presentations/widgets/dropdown_bar.dart';
 import 'package:forekast_app/presentations/widgets/gesture_button.dart';
 import 'package:get/get.dart';
@@ -14,6 +15,7 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  SettingsData settingsData = SettingsData();
   CitiesData citiesData = CitiesData();
   String selectedTheme = 'light';
   String selectedUnit = 'metric';
@@ -33,7 +35,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void initStateMethods() async {
-    final appSettings = await SettingsData.getPreferences();
+    final appSettings = await settingsData.getPreferences();
     final savedThemeMode = await AdaptiveTheme.getThemeMode();
     setState(() {
       selectedTheme =
@@ -51,7 +53,7 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   void unitOnChanged(String? newUnit) async {
-    await SettingsData.storeUnitPreference(newUnit!);
+    await settingsData.storeUnitPreference(newUnit!);
   }
 
   @override
@@ -145,6 +147,23 @@ class _SettingsPageState extends State<SettingsPage> {
                       },
                       buttonText: 'reset location',
                     ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(top: 14, bottom: 14),
+                    child: Divider(
+                      thickness: 0.5,
+                    ),
+                  ),
+                  CommonWidgets.myRichText(
+                    context,
+                    'Weather data provided by',
+                    text2: 'openweathermap.org',
+                  ),
+                  const SizedBox(height: 18),
+                  CommonWidgets.myRichText(
+                    context,
+                    'Cities data provided by',
+                    text2: 'countriesnow.space',
                   ),
                 ],
               ),

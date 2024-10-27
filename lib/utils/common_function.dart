@@ -48,11 +48,13 @@ String? getMonth(int month) {
 String? getDirection(int degree) {
   if (degree >= 0 && degree <= 45) {
     return 'N';
-  } else {
-    const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
-    final direction = directions[((degree / 45) % 8).round() - 1];
-    return direction;
   }
+  if (degree == 360) {
+    return 'N';
+  }
+  const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+  final direction = directions[((degree / 45) % 8).round() - 1];
+  return direction;
 }
 
 /// rangeDescription
@@ -62,4 +64,17 @@ String rangeDescription(String descr) {
     return "${descr.split('').getRange(0, 12).join()}...";
   }
   return descr;
+}
+
+String getTime(int epochTime) {
+  DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
+    epochTime * 1000,
+    isUtc: true,
+  );
+  String day = dateTime.day.toString().padLeft(2, '0');
+  int weekday = dateTime.weekday;
+  int month = dateTime.month.toInt();
+  String hour = dateTime.hour.toString().padLeft(2, '0');
+  String minute = dateTime.minute.toString().padLeft(2, '0');
+  return '${getWeekday(weekday)} $day ${getMonth(month)} $hour:$minute';
 }

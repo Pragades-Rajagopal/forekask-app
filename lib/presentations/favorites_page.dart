@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:forekast_app/data/models/weather_model.dart';
+import 'package:forekast_app/presentations/widgets/common_widgets.dart';
 import 'package:forekast_app/presentations/widgets/favorites_widgets.dart';
 import 'package:forekast_app/services/favorites_service.dart';
 import 'package:forekast_app/services/weather_service.dart';
@@ -28,6 +29,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
   FavoriteWeather favoritesApi = FavoriteWeather();
   WeatherApi weatherApi = WeatherApi();
   Map<String, dynamic> currentLocationWeatherData = {};
+  FavoritesData favoritesDataModel = FavoritesData();
+  SettingsData settingsData = SettingsData();
 
   @override
   void initState() {
@@ -36,8 +39,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
   }
 
   Future<void> _getFavoritesWeather() async {
-    Map<String, dynamic> settings = await SettingsData.getPreferences();
-    List<Map<String, dynamic>> data = await FavoritesData.getFavorites();
+    Map<String, dynamic> settings = await settingsData.getPreferences();
+    List<Map<String, dynamic>> data = await favoritesDataModel.getFavorites();
     List<String> cities = data.map((city) => city["city"].toString()).toList();
     final weatherData = await favoritesApi.getWeatherForAllFavorites(cities);
     if (widget.currentLocation.isNotEmpty) {
@@ -66,11 +69,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
   }
 
   Future<void> _setFavoriteToDefault(String city) async {
-    await FavoritesData.setFavoriteToDefault(city);
+    await favoritesDataModel.setFavoriteToDefault(city);
   }
 
   Future<void> _removeFavorites(String city) async {
-    await FavoritesData.removeFavorites(city);
+    await favoritesDataModel.removeFavorites(city);
     await _getFavoritesWeather();
   }
 
@@ -134,14 +137,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
               ),
             );
           } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
+            return CommonWidgets.myLoadingIndicator(
+              context,
+              text1: 'loading your favorites...',
             );
           }
           return Center(

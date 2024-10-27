@@ -15,6 +15,7 @@ class Weather {
   double? lat;
   double? lon;
   String? degree;
+  String? timestamp;
 
   Weather({
     this.cityName,
@@ -31,6 +32,7 @@ class Weather {
     this.lat,
     this.lon,
     this.degree,
+    this.timestamp,
   });
 
   /// Function to parse JSON data into model
@@ -50,6 +52,7 @@ class Weather {
     lat = json["coord"]["lat"];
     lon = json["coord"]["lon"];
     degree = getDirection(json["wind"]["deg"]);
+    timestamp = getTime(json["dt"] + json["timezone"]);
   }
 
   // Function to return json when unknown city is searched

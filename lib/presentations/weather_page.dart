@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:forekast_app/data/models/weather_model.dart';
+import 'package:forekast_app/presentations/widgets/common_widgets.dart';
 import 'package:forekast_app/presentations/widgets/weather_widgets.dart';
 import 'package:forekast_app/services/cities_service.dart';
 import 'package:forekast_app/services/favorites_service.dart';
@@ -20,6 +21,7 @@ class _WeatherPageState extends State<WeatherPage> {
   WeatherApi client = WeatherApi();
   CitiesApi citiesApi = CitiesApi();
   FavoriteWeather favoriteWeather = FavoriteWeather();
+  SettingsData settingsData = SettingsData();
   Weather? data;
   DailyWeather? dailyData;
   String? country;
@@ -69,7 +71,7 @@ class _WeatherPageState extends State<WeatherPage> {
     data = await client.getCurrentWeather(city);
     dailyData = await client.getDailyWeather(data?.lat, data?.lon);
     country = await citiesApi.getCountryName('${data?.country}');
-    Map<String, dynamic> settings = await SettingsData.getPreferences();
+    Map<String, dynamic> settings = await settingsData.getPreferences();
     temperatureUnit = settings["selectedUnit"] == 'metric' ? '°C' : '°F';
     windSpeed = settings["selectedUnit"] == 'metric' ? 'm/s' : 'mph';
   }
@@ -88,13 +90,14 @@ class _WeatherPageState extends State<WeatherPage> {
         try {
           if (snapshot.connectionState == ConnectionState.done) {
             if (data?.cityName == '') {
-              return Center(
-                child: Text(
-                  "Oops! \nWeather info not available\nfor city '${widget.selectedCity.value}'.\nPlease search for another city.",
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.tertiary,
+              return Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: Center(
+                  child: CommonWidgets.myRichText(
+                    context,
+                    'Oops! Weather info not available for',
+                    text2: widget.selectedCity.value,
                   ),
-                  textAlign: TextAlign.center,
                 ),
               );
             }
@@ -105,14 +108,10 @@ class _WeatherPageState extends State<WeatherPage> {
               ),
             );
           } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
-              child: SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-              ),
+            return CommonWidgets.myLoadingIndicator(
+              context,
+              text1: 'getting weather info for',
+              text2: city,
             );
           }
           return Center(
@@ -124,6 +123,7 @@ class _WeatherPageState extends State<WeatherPage> {
             ),
           );
         } catch (e) {
+          print(e);
           return Center(
             child: Text(
               'Something went wrong',
@@ -149,6 +149,7 @@ class _WeatherPageState extends State<WeatherPage> {
             "${data!.cityName}",
             "${data!.description}",
             "$country",
+            "${data!.timestamp}",
             context,
           ),
           const SizedBox(

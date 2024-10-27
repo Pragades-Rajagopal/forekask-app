@@ -5,8 +5,10 @@ import 'package:forekast_app/config/dotenv.dart';
 import 'package:forekast_app/data/models/weather_model.dart';
 
 class WeatherApi {
+  SettingsData settingsData = SettingsData();
+
   Future<String> getUnitPreference() async {
-    Map<String, dynamic> settings = await SettingsData.getPreferences();
+    Map<String, dynamic> settings = await settingsData.getPreferences();
     return settings["selectedUnit"];
   }
 

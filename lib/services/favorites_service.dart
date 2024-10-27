@@ -5,10 +5,13 @@ import 'package:http/http.dart' as http;
 import 'package:forekast_app/config/dotenv.dart';
 
 class FavoriteWeather {
+  FavoritesData favoritesData = FavoritesData();
+  SettingsData settingsData = SettingsData();
+
   Future<SingleFavoriteWeather> getWeatherForFavoriteCity(String city) async {
     try {
       final env = await parseStringToMap(assetsFileName: '.env');
-      Map<String, dynamic> settings = await SettingsData.getPreferences();
+      Map<String, dynamic> settings = await settingsData.getPreferences();
       var url = Uri.parse(
           'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=${env["OPENWEATHER_API_KEY_DAILY"]}&units=${settings["selectedUnit"]}');
       var response = await http.get(url);
@@ -46,13 +49,13 @@ class FavoriteWeather {
 
   Future<bool> saveFavorites(String city) async {
     try {
-      List<Map<String, dynamic>> data = await FavoritesData.getFavorites();
+      List<Map<String, dynamic>> data = await favoritesData.getFavorites();
       if (data.length > 7) return false;
       List<Map<String, dynamic>> newData = [
         ...data,
         {"city": city, "default": "false"}
       ];
-      await FavoritesData.saveFavorites(newData);
+      await favoritesData.saveFavorites(newData);
       return true;
     } catch (e) {
       throw Exception('Failed to add $city as favorite');
@@ -60,7 +63,7 @@ class FavoriteWeather {
   }
 
   Future<bool> favoriteExists(String city_) async {
-    List<Map<String, dynamic>> data = await FavoritesData.getFavorites();
+    List<Map<String, dynamic>> data = await favoritesData.getFavorites();
     final cityData = data.any((city) {
       return city["city"].toString().toLowerCase() ==
           city_.toString().toLowerCase();
@@ -70,7 +73,7 @@ class FavoriteWeather {
   }
 
   Future<int> favoritesCount() async {
-    List<Map<String, dynamic>> data = await FavoritesData.getFavorites();
+    List<Map<String, dynamic>> data = await favoritesData.getFavorites();
     return data.length;
   }
 }

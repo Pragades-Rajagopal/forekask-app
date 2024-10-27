@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:forekast_app/presentations/base.dart';
 import 'package:forekast_app/presentations/widgets/cities_search_sheet.dart';
+import 'package:forekast_app/presentations/widgets/common_widgets.dart';
 import 'package:forekast_app/presentations/widgets/gesture_button.dart';
 import 'package:forekast_app/services/location_service.dart';
 import 'package:get/get.dart';
@@ -19,6 +20,13 @@ class _LandingPageState extends State<LandingPage> {
   IconData themeIcon = Icons.dark_mode;
 
   Future<void> getLocation() async {
+    showDialog(
+      context: context,
+      builder: (_) => CommonWidgets.myLoadingIndicator(
+        context,
+        text1: 'determining current location',
+      ),
+    );
     final location = await LocationService.getCurrentLocation(context);
     final currentCity = await LocationService.getAddressFromLatLng(
         location.latitude, location.longitude);
