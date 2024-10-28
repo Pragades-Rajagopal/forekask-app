@@ -4,14 +4,20 @@ import 'package:http/http.dart' as http;
 import 'package:forekast_app/config/dotenv.dart';
 import 'package:forekast_app/data/models/weather_model.dart';
 
+/// Weather API model
+/// - Handles weather information for a city
 class WeatherApi {
   SettingsData settingsData = SettingsData();
 
+  /// Retieves the unit preference
+  ///
+  /// Internally calls `Settings` model from local data
   Future<String> getUnitPreference() async {
     Map<String, dynamic> settings = await settingsData.getPreferences();
     return settings["selectedUnit"];
   }
 
+  /// Retrieves the weather information of a city
   Future<Weather> getCurrentWeather(String? city) async {
     try {
       // Get the API key from .env file
@@ -28,6 +34,7 @@ class WeatherApi {
     }
   }
 
+  /// Retrieves the daily forecast information of a city
   Future<DailyWeather> getDailyWeather(double? lat, double? lon) async {
     try {
       final env = await parseStringToMap(assetsFileName: '.env');

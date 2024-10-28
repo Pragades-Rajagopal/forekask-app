@@ -4,10 +4,14 @@ import 'package:forekast_app/data/models/favorites_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:forekast_app/config/dotenv.dart';
 
+/// Favorites API model
+/// - Handles weather information for favorite cities
+/// - Handles save and other validations for favorites
 class FavoriteWeather {
   FavoritesData favoritesData = FavoritesData();
   SettingsData settingsData = SettingsData();
 
+  /// Retrieves the weather information for the favorite city
   Future<SingleFavoriteWeather> getWeatherForFavoriteCity(String city) async {
     try {
       final env = await parseStringToMap(assetsFileName: '.env');
@@ -23,6 +27,9 @@ class FavoriteWeather {
     }
   }
 
+  /// Retrieves the weather information for all the favorite city
+  ///
+  /// Loops through favorites and fetches weather info
   Future<List<Map<String, dynamic>>> getWeatherForAllFavorites(
       List<String> cities) async {
     try {
@@ -47,6 +54,9 @@ class FavoriteWeather {
     }
   }
 
+  /// Saves a city as favorite
+  ///
+  /// Internally calls `FavoritesData` local data model
   Future<bool> saveFavorites(String city) async {
     try {
       List<Map<String, dynamic>> data = await favoritesData.getFavorites();
@@ -62,6 +72,9 @@ class FavoriteWeather {
     }
   }
 
+  /// Checks if a city is already added to favorites
+  ///
+  /// Internally calls `FavoritesData` local data model
   Future<bool> favoriteExists(String city_) async {
     List<Map<String, dynamic>> data = await favoritesData.getFavorites();
     final cityData = data.any((city) {
@@ -72,6 +85,11 @@ class FavoriteWeather {
     return false;
   }
 
+  /// Retrieves the number of favorites added
+  ///
+  /// This check is to limit adding only upto 8 cities as favorites
+  ///
+  /// Internally calls `FavoritesData` local data model
   Future<int> favoritesCount() async {
     List<Map<String, dynamic>> data = await favoritesData.getFavorites();
     return data.length;

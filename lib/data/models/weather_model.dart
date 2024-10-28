@@ -36,7 +36,6 @@ class Weather {
   });
 
   /// Function to parse JSON data into model
-
   Weather.fromJSON(Map<String, dynamic> json) {
     cityName = json["name"];
     temp = roundTempValue(json["main"]["temp"]);
@@ -56,7 +55,6 @@ class Weather {
   }
 
   // Function to return json when unknown city is searched
-
   Weather.voidData() {
     cityName = '';
   }

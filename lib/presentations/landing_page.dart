@@ -20,18 +20,22 @@ class _LandingPageState extends State<LandingPage> {
   IconData themeIcon = Icons.dark_mode;
 
   Future<void> getLocation() async {
-    showDialog(
-      context: context,
-      builder: (_) => CommonWidgets.myLoadingIndicator(
-        context,
-        text1: 'determining current location',
-      ),
-    );
-    final location = await LocationService.getCurrentLocation(context);
-    final currentCity = await LocationService.getAddressFromLatLng(
-        location.latitude, location.longitude);
-    await citiesData.storeDefaultCity(currentCity!);
-    Get.offAll(() => const BasePage());
+    try {
+      final location = await LocationService.getCurrentLocation(context);
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (_) => CommonWidgets.myLoadingIndicator(
+            context,
+            text1: 'determining current location',
+          ),
+        );
+      }
+      final currentCity = await LocationService.getAddressFromLatLng(
+          location.latitude, location.longitude);
+      await citiesData.storeDefaultCity(currentCity!);
+      Get.offAll(() => const BasePage());
+    } catch (_) {}
   }
 
   @override

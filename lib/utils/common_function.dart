@@ -1,17 +1,18 @@
-/// roundTempValue
 /// Rounds the temperature to integer
 int roundTempValue(dynamic temp) {
   return temp.round();
 }
 
-/// getDateFromEpoch
 /// Converts Unix epoch into date format 'Fri, Oct 6'
+///
+/// To display the dates in daily forekast
 String? getDateFromEpoch(int epoch) {
   var timestamp = epoch;
   var date = DateTime.fromMillisecondsSinceEpoch(timestamp * 1000);
   return "${getWeekday(date.weekday)},\n${getMonth(date.month)} ${date.day}";
 }
 
+/// Gets the weekday
 String? getWeekday(int weekday) {
   const values = {
     1: 'Mon',
@@ -25,6 +26,7 @@ String? getWeekday(int weekday) {
   return values[weekday];
 }
 
+/// Gets the month
 String? getMonth(int month) {
   const values = {
     1: 'Jan',
@@ -43,7 +45,6 @@ String? getMonth(int month) {
   return values[month];
 }
 
-/// getDirection
 /// Converts degree to direction like N, NE, ...
 String? getDirection(int degree) {
   if (degree >= 0 && degree <= 45) {
@@ -57,7 +58,6 @@ String? getDirection(int degree) {
   return direction;
 }
 
-/// rangeDescription
 /// Trims description to 12 character
 String rangeDescription(String descr) {
   if (descr.split('').length > 12) {
@@ -66,6 +66,9 @@ String rangeDescription(String descr) {
   return descr;
 }
 
+/// Converts the `epoch` time to format `Mon 28 Oct 22:00`
+///
+/// To display the date time of the city
 String getTime(int epochTime) {
   DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
     epochTime * 1000,

@@ -123,7 +123,6 @@ class _WeatherPageState extends State<WeatherPage> {
             ),
           );
         } catch (e) {
-          print(e);
           return Center(
             child: Text(
               'Something went wrong',

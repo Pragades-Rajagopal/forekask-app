@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 
+/// Parses the .env file
 Future<Map<String, String>> parseStringToMap(
     {String assetsFileName = '.env'}) async {
   final lines = await rootBundle.loadString(assetsFileName);

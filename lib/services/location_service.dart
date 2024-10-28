@@ -3,7 +3,10 @@ import 'package:forekast_app/presentations/widgets/common_widgets.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
+/// Location service model
+/// - Handles device location information to get current location
 class LocationService {
+  /// Retieves the current location of the device
   static Future<Position> getCurrentLocation(BuildContext context) async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -27,7 +30,6 @@ class LocationService {
       return Future.error('Location permissions are denied');
     }
     if (permission == LocationPermission.deniedForever) {
-      // Get.snackbar('Warning', 'Location permission denied permanently');
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           CommonWidgets.mySnackBar(
@@ -40,6 +42,7 @@ class LocationService {
     return await Geolocator.getCurrentPosition();
   }
 
+  /// Retrieves the city for the given coordinates
   static Future<String?> getAddressFromLatLng(
       double latitude, double longitude) async {
     List<Placemark> placemarks =
