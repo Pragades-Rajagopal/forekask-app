@@ -1,3 +1,8 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:forekast_app/presentations/widgets/common_widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 /// Rounds the temperature to integer
 int roundTempValue(dynamic temp) {
   return temp.round();
@@ -80,4 +85,23 @@ String getTime(int epochTime) {
   String hour = dateTime.hour.toString().padLeft(2, '0');
   String minute = dateTime.minute.toString().padLeft(2, '0');
   return '${getWeekday(weekday)} $day ${getMonth(month)} $hour:$minute';
+}
+
+/// Launches Google or Apple maps of the city
+void launchMapsUrl(BuildContext context, double lat, double lon) async {
+  try {
+    late String url;
+    if (Platform.isAndroid) {
+      url = 'https://www.google.com/maps/search/?api=1&query=$lat,$lon';
+    }
+    if (Platform.isIOS) {
+      url = 'https://maps.apple.com/?q=$lat,$lon';
+    }
+    Uri uri = Uri.parse(url);
+    await launchUrl(uri);
+  } catch (_) {
+    if (context.mounted) {
+      CommonWidgets.mySnackBar(context, 'Unable to open maps');
+    }
+  }
 }

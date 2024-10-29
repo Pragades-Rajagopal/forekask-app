@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:adaptive_theme/adaptive_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:forekast_app/data/local_storage/local_data.dart';
@@ -18,24 +19,30 @@ class LandingPage extends StatefulWidget {
 class _LandingPageState extends State<LandingPage> {
   CitiesData citiesData = CitiesData();
   IconData themeIcon = Icons.dark_mode;
+  bool _showLoadingIndicator = false;
+  String _loaderMessage = 'determining device location';
+
+  void _toggleLoadingIndicator() =>
+      setState(() => _showLoadingIndicator = !_showLoadingIndicator);
 
   Future<void> getLocation() async {
     try {
+      _toggleLoadingIndicator();
       final location = await LocationService.getCurrentLocation(context);
-      if (mounted) {
-        showDialog(
-          context: context,
-          builder: (_) => CommonWidgets.myLoadingIndicator(
-            context,
-            text1: 'determining current location',
-          ),
-        );
-      }
       final currentCity = await LocationService.getAddressFromLatLng(
           location.latitude, location.longitude);
       await citiesData.storeDefaultCity(currentCity!);
-      Get.offAll(() => const BasePage());
-    } catch (_) {}
+      setState(() => _loaderMessage = 'getting things ready');
+      Timer(
+        const Duration(seconds: 3),
+        () {
+          _toggleLoadingIndicator();
+          Get.offAll(() => const BasePage());
+        },
+      );
+    } catch (_) {
+      _toggleLoadingIndicator();
+    }
   }
 
   @override
@@ -43,44 +50,49 @@ class _LandingPageState extends State<LandingPage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _appBar(context),
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const SizedBox(
-                  width: 96.0,
-                  height: 96.0,
-                  child: CircleAvatar(
-                    foregroundImage: AssetImage('assets/app_icon.png'),
-                    backgroundColor: Colors.transparent,
+      body: _showLoadingIndicator
+          ? CommonWidgets.myLoadingIndicator(
+              context,
+              text1: _loaderMessage,
+            )
+          : SafeArea(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(
+                        width: 96.0,
+                        height: 96.0,
+                        child: CircleAvatar(
+                          foregroundImage: AssetImage('assets/app_icon.png'),
+                          backgroundColor: Colors.transparent,
+                        ),
+                      ),
+                      const SizedBox(height: 30.0),
+                      Text(
+                        'forekast',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: 24.0,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 30.0),
+                      GestureButton(
+                        onTap: () async => await getLocation(),
+                        buttonText: 'allow device location',
+                      ),
+                      const SizedBox(height: 24.0),
+                      CitiesSearchSheet(
+                        usageType: 'landing_page',
+                        onValueChanged: (String _) {},
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 30.0),
-                Text(
-                  'forekast',
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 30.0),
-                GestureButton(
-                  onTap: () async => await getLocation(),
-                  buttonText: 'allow device location',
-                ),
-                const SizedBox(height: 24.0),
-                CitiesSearchSheet(
-                  usageType: 'landing_page',
-                  onValueChanged: (String _) {},
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 

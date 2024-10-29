@@ -7,6 +7,7 @@ import 'package:forekast_app/presentations/widgets/weather_widgets.dart';
 import 'package:forekast_app/services/cities_service.dart';
 import 'package:forekast_app/services/favorites_service.dart';
 import 'package:forekast_app/services/weather_service.dart';
+import 'package:forekast_app/utils/common_function.dart';
 
 class WeatherPage extends StatefulWidget {
   final ValueNotifier<String> selectedCity;
@@ -49,6 +50,10 @@ class _WeatherPageState extends State<WeatherPage> {
     super.initState();
     widget.selectedCity.addListener(_handleCityChange);
     checkFavorite(widget.selectedCity.value);
+  }
+
+  void initStateAsyncFunc() async {
+    await getData(widget.selectedCity.value);
   }
 
   @override
@@ -136,7 +141,7 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
-  Container weatherData(data) {
+  Widget weatherData(data) {
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
       child: Column(
@@ -188,13 +193,40 @@ class _WeatherPageState extends State<WeatherPage> {
           const SizedBox(
             height: 8.0,
           ),
-          addToFavButton(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              addToFavButton(),
+              const SizedBox(width: 18),
+              launchMaps(data),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Container addToFavButton() {
+  Widget launchMaps(data) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.all(Radius.circular(24.0)),
+        color: Theme.of(context).colorScheme.tertiary.withOpacity(0.1),
+      ),
+      child: IconButton(
+        style: const ButtonStyle(
+          splashFactory: NoSplash.splashFactory,
+          overlayColor: WidgetStatePropertyAll(Colors.transparent),
+        ),
+        onPressed: () => launchMapsUrl(context, data?.lat, data?.lon),
+        icon: const Icon(
+          CupertinoIcons.map,
+          color: Colors.lightBlue,
+        ),
+      ),
+    );
+  }
+
+  Widget addToFavButton() {
     return Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(24.0)),
