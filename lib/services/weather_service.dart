@@ -39,9 +39,9 @@ class WeatherApi {
     try {
       final env = await parseStringToMap(assetsFileName: '.env');
       String unit = await getUnitPreference();
-      var url = Uri.parse(
+      var uri = Uri.parse(
           'https://api.openweathermap.org/data/2.5/onecall?lat=$lat&lon=$lon&units=$unit&appid=${env["OPENWEATHER_API_KEY_DAILY"]}');
-      var response = await http.get(url);
+      var response = await http.get(uri);
       var body = jsonDecode(response.body);
       DailyWeather data = DailyWeather.fromJSON(body["daily"]);
       return data;

@@ -94,22 +94,22 @@ class _WeatherPageState extends State<WeatherPage> {
       builder: (context, snapshot) {
         try {
           if (snapshot.connectionState == ConnectionState.done) {
-            if (data?.cityName == '') {
-              return Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: Center(
-                  child: CommonWidgets.myRichText(
-                    context,
-                    'Oops! Weather info not available for',
-                    text2: widget.selectedCity.value,
-                  ),
+            if (data?.cityName != '') {
+              return SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [weatherData(data)],
                 ),
               );
             }
-            return SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                children: [weatherData(data)],
+            return Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Center(
+                child: CommonWidgets.myRichText(
+                  context,
+                  'Oops! Weather info not available for',
+                  text2: widget.selectedCity.value,
+                ),
               ),
             );
           } else if (snapshot.connectionState == ConnectionState.waiting) {
@@ -173,6 +173,9 @@ class _WeatherPageState extends State<WeatherPage> {
             "${data!.pressure}mBar",
             "${data!.feelsLike}$temperatureUnit",
             "${data!.degree}",
+            "${data!.sunrise}",
+            "${data!.sunset}",
+            "${data!.visibility}km",
             context,
           ),
           const SizedBox(

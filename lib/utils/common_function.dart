@@ -74,7 +74,7 @@ String rangeDescription(String descr) {
 /// Converts the `epoch` time to format `Mon 28 Oct 22:00`
 ///
 /// To display the date time of the city
-String getTime(int epochTime) {
+String getTime(int epochTime, {format = 'datetime'}) {
   DateTime dateTime = DateTime.fromMillisecondsSinceEpoch(
     epochTime * 1000,
     isUtc: true,
@@ -84,7 +84,9 @@ String getTime(int epochTime) {
   int month = dateTime.month.toInt();
   String hour = dateTime.hour.toString().padLeft(2, '0');
   String minute = dateTime.minute.toString().padLeft(2, '0');
-  return '${getWeekday(weekday)} $day ${getMonth(month)} $hour:$minute';
+  return format == 'datetime'
+      ? '${getWeekday(weekday)} $day ${getMonth(month)} $hour:$minute'
+      : '$hour:$minute';
 }
 
 /// Launches Google or Apple maps of the city

@@ -43,11 +43,13 @@ class LocationService {
   }
 
   /// Retrieves the city for the given coordinates
+  ///
+  /// Returns city name with country code. Ex: `Svalbard,SJ`
   static Future<String?> getAddressFromLatLng(
       double latitude, double longitude) async {
     List<Placemark> placemarks =
         await placemarkFromCoordinates(latitude, longitude);
     Placemark place = placemarks[0];
-    return place.locality;
+    return '${place.locality},${place.isoCountryCode}';
   }
 }

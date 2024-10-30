@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 Image getIcon(String? icon) {
@@ -35,57 +36,58 @@ Widget currentWeather(
             ),
           ),
         ),
-        Text(
+        currentWeatherElement(
           temp,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: Theme.of(context).textTheme.labelLarge?.fontSize,
-            color: Theme.of(context).colorScheme.primary,
-          ),
+          Theme.of(context).colorScheme.primary,
+          Theme.of(context).textTheme.labelLarge?.fontSize,
+          FontWeight.bold,
+          context,
         ),
-        SizedBox(
-          width: 340,
-          child: Text(
-            "$location, $country",
-            style: TextStyle(
-              fontSize: Theme.of(context).textTheme.labelMedium?.fontSize,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            textAlign: TextAlign.center,
-          ),
+        currentWeatherElement(
+          "$location, $country",
+          Theme.of(context).colorScheme.secondary,
+          Theme.of(context).textTheme.labelMedium?.fontSize,
+          FontWeight.bold,
+          context,
         ),
-        const SizedBox(
-          height: 10.0,
+        const SizedBox(height: 10.0),
+        currentWeatherElement(
+          description,
+          Theme.of(context).colorScheme.tertiary,
+          Theme.of(context).textTheme.titleLarge?.fontSize,
+          FontWeight.w300,
+          context,
         ),
-        SizedBox(
-          width: 340,
-          child: Text(
-            description,
-            style: TextStyle(
-              fontSize: Theme.of(context).textTheme.titleLarge?.fontSize,
-              fontWeight: FontWeight.w300,
-              color: Theme.of(context).colorScheme.tertiary,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-        const SizedBox(
-          height: 4.0,
-        ),
-        SizedBox(
-          width: 340,
-          child: Text(
-            timestamp,
-            style: TextStyle(
-              fontSize: Theme.of(context).textTheme.titleSmall?.fontSize,
-              fontWeight: FontWeight.w300,
-              color: Theme.of(context).colorScheme.tertiary,
-            ),
-            textAlign: TextAlign.center,
-          ),
+        const SizedBox(height: 4.0),
+        currentWeatherElement(
+          timestamp,
+          Theme.of(context).colorScheme.tertiary,
+          Theme.of(context).textTheme.titleSmall?.fontSize,
+          FontWeight.w300,
+          context,
         ),
       ],
+    ),
+  );
+}
+
+Widget currentWeatherElement(
+  String value,
+  Color color,
+  double? fontSize,
+  FontWeight fontWeight,
+  BuildContext context,
+) {
+  return SizedBox(
+    width: 340,
+    child: Text(
+      value,
+      style: TextStyle(
+        color: color,
+        fontSize: fontSize,
+        fontWeight: fontWeight,
+      ),
+      textAlign: TextAlign.center,
     ),
   );
 }
@@ -96,17 +98,11 @@ Widget additionalInformation(
   String pressure,
   String feelsLike,
   String? degree,
+  String sunrise,
+  String sunset,
+  String visibility,
   BuildContext context,
 ) {
-  var containerTitleStyle = TextStyle(
-    fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
-    color: Theme.of(context).colorScheme.tertiary,
-  );
-  var containerInfoStyle = TextStyle(
-    fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
-    fontWeight: FontWeight.bold,
-    color: Theme.of(context).colorScheme.secondary,
-  );
   return Container(
     width: double.infinity,
     padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
@@ -118,77 +114,15 @@ Widget additionalInformation(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              width: 165,
-              height: 100,
-              margin: const EdgeInsets.only(right: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                color: Theme.of(context).colorScheme.primaryContainer,
-              ),
-              padding: const EdgeInsets.symmetric(
-                vertical: 10,
-                horizontal: 10,
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        "wind",
-                        style: containerTitleStyle,
-                      )
-                    ],
-                  ),
-                  div,
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          wind,
-                          style: containerInfoStyle,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+            additionalInfoSubWidget(
+              context,
+              Icons.air,
+              'wind',
+              wind,
+              position: 'left',
             ),
-            Container(
-              width: 165,
-              height: 100,
-              margin: const EdgeInsets.only(left: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                color: Theme.of(context).colorScheme.primaryContainer,
-              ),
-              padding: const EdgeInsets.symmetric(
-                vertical: 10,
-                horizontal: 10,
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        "humidity",
-                        style: containerTitleStyle,
-                      )
-                    ],
-                  ),
-                  div,
-                  Row(
-                    children: [
-                      Text(
-                        humidity,
-                        style: containerInfoStyle,
-                      )
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            additionalInfoSubWidget(
+                context, Icons.water_drop_outlined, 'humidity', humidity),
           ],
         ),
         div,
@@ -196,77 +130,93 @@ Widget additionalInformation(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              width: 165,
-              height: 100,
-              margin: const EdgeInsets.only(right: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                color: Theme.of(context).colorScheme.primaryContainer,
-              ),
-              padding: const EdgeInsets.symmetric(
-                vertical: 10,
-                horizontal: 10,
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        "pressure",
-                        style: containerTitleStyle,
-                      )
-                    ],
-                  ),
-                  div,
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          pressure,
-                          style: containerInfoStyle,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
+            additionalInfoSubWidget(
+              context,
+              CupertinoIcons.gauge,
+              'pressure',
+              pressure,
+              position: 'left',
             ),
-            Container(
-              width: 165,
-              height: 100,
-              margin: const EdgeInsets.only(left: 10),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                color: Theme.of(context).colorScheme.primaryContainer,
-              ),
-              padding: const EdgeInsets.symmetric(
-                vertical: 10,
-                horizontal: 10,
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        "feels like",
-                        style: containerTitleStyle,
-                      )
-                    ],
-                  ),
-                  div,
-                  Row(
-                    children: [
-                      Text(
-                        feelsLike,
-                        style: containerInfoStyle,
-                      )
-                    ],
-                  ),
-                ],
-              ),
+            additionalInfoSubWidget(
+                context, CupertinoIcons.thermometer, 'feels like', feelsLike),
+          ],
+        ),
+        div,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            additionalInfoSubWidget(
+              context,
+              CupertinoIcons.sunrise,
+              'sunrise',
+              '$sunrise - $sunset',
+              position: 'left',
             ),
+            additionalInfoSubWidget(
+                context, CupertinoIcons.eye, 'visibility', visibility),
+          ],
+        ),
+      ],
+    ),
+  );
+}
+
+Widget additionalInfoSubWidget(
+  BuildContext context,
+  IconData icon,
+  String title,
+  String value, {
+  String position = 'right',
+}) {
+  var containerTitleStyle = TextStyle(
+    fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
+    color: Theme.of(context).colorScheme.tertiary,
+  );
+  var containerInfoStyle = TextStyle(
+    fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
+    fontWeight: FontWeight.bold,
+    color: Theme.of(context).colorScheme.secondary,
+  );
+  return Container(
+    width: 165,
+    height: 100,
+    margin: position == 'right'
+        ? const EdgeInsets.only(left: 10)
+        : const EdgeInsets.only(right: 10),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(10.0),
+      color: Theme.of(context).colorScheme.primaryContainer,
+    ),
+    padding: const EdgeInsets.symmetric(
+      vertical: 10,
+      horizontal: 10,
+    ),
+    child: Column(
+      children: [
+        Row(
+          children: [
+            Icon(
+              icon,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            const SizedBox(width: 8.0),
+            Text(
+              title,
+              style: containerTitleStyle,
+            )
+          ],
+        ),
+        div,
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                value,
+                style: containerInfoStyle,
+                overflow: TextOverflow.ellipsis,
+              ),
+            )
           ],
         ),
       ],
