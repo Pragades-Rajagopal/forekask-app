@@ -19,6 +19,7 @@ class Weather {
   String? sunrise;
   String? sunset;
   int? visibility;
+  String? weatherCondition;
 
   Weather({
     this.cityName,
@@ -39,6 +40,7 @@ class Weather {
     this.sunrise,
     this.sunset,
     this.visibility,
+    this.weatherCondition,
   });
 
   /// Function to parse JSON data into model
@@ -67,6 +69,7 @@ class Weather {
       format: 'time',
     );
     visibility = (json["visibility"] / 1000).round();
+    weatherCondition = json["weather"][0]["icon"];
   }
 
   // Function to return json when unknown city is searched

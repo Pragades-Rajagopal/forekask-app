@@ -230,11 +230,13 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
       },
     ).then((selectedCity) async {
       if (selectedCity != null && widget.usageType == 'landing_page') {
-        await citiesDataModel.storeDefaultCity(selectedCity);
+        final city = selectedCity.toString().trim();
+        await citiesDataModel.storeDefaultCity(city);
         Get.offAll(() => const BasePage());
       } else if (selectedCity != null) {
+        final city = selectedCity.toString().trim();
         setState(() {
-          widget.onValueChanged(selectedCity);
+          widget.onValueChanged(city);
         });
       }
     });

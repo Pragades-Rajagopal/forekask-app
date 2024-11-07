@@ -72,13 +72,18 @@ class _WeatherPageState extends State<WeatherPage> {
     favoriteButton.value = isFavorite ? addedFavText : addToFavText;
   }
 
-  Future<void> getData(String city) async {
-    data = await client.getCurrentWeather(city);
-    dailyData = await client.getDailyWeather(data?.lat, data?.lon);
-    country = await citiesApi.getCountryName('${data?.country}');
-    Map<String, dynamic> settings = await settingsData.getPreferences();
-    temperatureUnit = settings["selectedUnit"] == 'metric' ? '°C' : '°F';
-    windSpeed = settings["selectedUnit"] == 'metric' ? 'm/s' : 'mph';
+  Future<Weather?> getData(String city) async {
+    try {
+      data = await client.getCurrentWeather(city);
+      dailyData = await client.getDailyWeather(data?.lat, data?.lon);
+      country = await citiesApi.getCountryName('${data?.country}');
+      Map<String, dynamic> settings = await settingsData.getPreferences();
+      temperatureUnit = settings["selectedUnit"] == 'metric' ? '°C' : '°F';
+      windSpeed = settings["selectedUnit"] == 'metric' ? 'm/s' : 'mph';
+      return data;
+    } catch (e) {
+      return null;
+    }
   }
 
   @override
@@ -89,29 +94,30 @@ class _WeatherPageState extends State<WeatherPage> {
   }
 
   FutureBuilder<void> weatherFutureBuilder(String city) {
-    return FutureBuilder(
-      future: getData(city),
+    return FutureBuilder<Weather?>(
       builder: (context, snapshot) {
         try {
           if (snapshot.connectionState == ConnectionState.done) {
-            if (data?.cityName != '') {
+            final snapshotData = snapshot.data;
+            if (snapshotData != null && snapshotData.cityName!.isNotEmpty) {
               return SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
                 child: Column(
                   children: [weatherData(data)],
                 ),
               );
-            }
-            return Padding(
-              padding: const EdgeInsets.all(18.0),
-              child: Center(
-                child: CommonWidgets.myRichText(
-                  context,
-                  'Oops! Weather info not available for',
-                  text2: widget.selectedCity.value,
+            } else {
+              return Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: Center(
+                  child: CommonWidgets.myRichText(
+                    context,
+                    'Oops! Weather info not available for',
+                    text2: widget.selectedCity.value,
+                  ),
                 ),
-              ),
-            );
+              );
+            }
           } else if (snapshot.connectionState == ConnectionState.waiting) {
             return CommonWidgets.myLoadingIndicator(
               context,
@@ -138,6 +144,7 @@ class _WeatherPageState extends State<WeatherPage> {
           );
         }
       },
+      future: getData(city),
     );
   }
 
@@ -148,12 +155,12 @@ class _WeatherPageState extends State<WeatherPage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           currentWeather(
-            getIcon(data!.icon),
             "${data!.temp}$temperatureUnit",
             "${data!.cityName}",
             "${data!.description}",
             "$country",
             "${data!.timestamp}",
+            "${data!.weatherCondition}",
             context,
           ),
           const SizedBox(
@@ -200,7 +207,7 @@ class _WeatherPageState extends State<WeatherPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               addToFavButton(),
-              const SizedBox(width: 18),
+              if (favoriteCount < 8) const SizedBox(width: 18),
               launchMaps(data),
             ],
           ),

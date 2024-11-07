@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 Image getIcon(String? icon) {
   String url = "https://openweathermap.org/img/wn/$icon@4x.png";
@@ -11,15 +12,53 @@ Image getSmallIcon(String icon) {
   return Image.network(url);
 }
 
+Widget getWeatherAnimation(String? condition) {
+  String assetPath = 'assets/weather_animations';
+  switch (condition) {
+    case '01d':
+      assetPath = '$assetPath/sunny.json';
+      break;
+    case '01n':
+      assetPath = '$assetPath/clear_night.json';
+      break;
+    case '02d':
+      assetPath = '$assetPath/few_clouds_day.json';
+      break;
+    case '02n':
+      assetPath = '$assetPath/few_clouds_night.json';
+      break;
+    case '03d' || '03n' || '04d' || '04n':
+      assetPath = '$assetPath/cloudy.json';
+      break;
+    case '09d' || '10d':
+      assetPath = '$assetPath/shower_rain_day.json';
+      break;
+    case '09n' || '10n':
+      assetPath = '$assetPath/shower_rain_night.json';
+      break;
+    case '11d' || '11n':
+      assetPath = '$assetPath/thunderstorm.json';
+      break;
+    case '13d' || '13n':
+      assetPath = '$assetPath/snow.json';
+      break;
+    case '50d' || '50n':
+      assetPath = '$assetPath/mist.json';
+      break;
+    default:
+  }
+  return Lottie.asset(assetPath);
+}
+
 SizedBox div = const SizedBox(height: 16);
 
 Widget currentWeather(
-  Image icon,
   String temp,
   String location,
   String description,
   String country,
   String timestamp,
+  String weatherCondition,
   BuildContext context,
 ) {
   return Center(
@@ -29,11 +68,9 @@ Widget currentWeather(
       children: [
         Center(
           child: SizedBox(
-            width: 220,
-            height: 220,
-            child: FittedBox(
-              child: icon,
-            ),
+            width: 320,
+            height: 320,
+            child: getWeatherAnimation(weatherCondition),
           ),
         ),
         currentWeatherElement(

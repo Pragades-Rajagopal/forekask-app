@@ -34,7 +34,7 @@ class _LandingPageState extends State<LandingPage> {
       await citiesData.storeDefaultCity(currentCity!);
       setState(() => _loaderMessage = 'getting things ready');
       Timer(
-        const Duration(seconds: 3),
+        const Duration(seconds: 1),
         () {
           _toggleLoadingIndicator();
           Get.offAll(() => const BasePage());
@@ -66,7 +66,8 @@ class _LandingPageState extends State<LandingPage> {
                         width: 96.0,
                         height: 96.0,
                         child: CircleAvatar(
-                          foregroundImage: AssetImage('assets/app_icon.png'),
+                          foregroundImage:
+                              AssetImage('assets/icons/app_icon.png'),
                           backgroundColor: Colors.transparent,
                         ),
                       ),
