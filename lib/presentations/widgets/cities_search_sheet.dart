@@ -74,7 +74,7 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
         return StatefulBuilder(
           builder: (context, setState) {
             return SizedBox(
-              height: MediaQuery.of(context).size.height * 0.85,
+              height: MediaQuery.of(context).size.height * 0.88,
               width: double.infinity,
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
@@ -232,7 +232,11 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
       if (selectedCity != null && widget.usageType == 'landing_page') {
         final city = selectedCity.toString().trim();
         await citiesDataModel.storeDefaultCity(city);
-        Get.offAll(() => const BasePage());
+        Get.offAll(
+          () => BasePage(
+            weatherNotifier: ValueNotifier(''),
+          ),
+        );
       } else if (selectedCity != null) {
         final city = selectedCity.toString().trim();
         setState(() {

@@ -52,10 +52,6 @@ class _WeatherPageState extends State<WeatherPage> {
     checkFavorite(widget.selectedCity.value);
   }
 
-  void initStateAsyncFunc() async {
-    await getData(widget.selectedCity.value);
-  }
-
   @override
   void dispose() {
     widget.selectedCity.removeListener(_handleCityChange);
@@ -72,9 +68,9 @@ class _WeatherPageState extends State<WeatherPage> {
     favoriteButton.value = isFavorite ? addedFavText : addToFavText;
   }
 
-  Future<Weather?> getData(String city) async {
+  Future<Weather?> getData() async {
     try {
-      data = await client.getCurrentWeather(city);
+      data = await client.getCurrentWeather(widget.selectedCity.value);
       dailyData = await client.getDailyWeather(data?.lat, data?.lon);
       country = await citiesApi.getCountryName('${data?.country}');
       Map<String, dynamic> settings = await settingsData.getPreferences();
@@ -89,11 +85,11 @@ class _WeatherPageState extends State<WeatherPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: weatherFutureBuilder(widget.selectedCity.value),
+      body: weatherFutureBuilder(),
     );
   }
 
-  FutureBuilder<void> weatherFutureBuilder(String city) {
+  FutureBuilder<void> weatherFutureBuilder() {
     return FutureBuilder<Weather?>(
       builder: (context, snapshot) {
         try {
@@ -122,7 +118,7 @@ class _WeatherPageState extends State<WeatherPage> {
             return CommonWidgets.myLoadingIndicator(
               context,
               text1: 'getting weather info for',
-              text2: city,
+              text2: widget.selectedCity.value,
             );
           }
           return Center(
@@ -144,7 +140,7 @@ class _WeatherPageState extends State<WeatherPage> {
           );
         }
       },
-      future: getData(city),
+      future: getData(),
     );
   }
 

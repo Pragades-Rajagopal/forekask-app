@@ -21,6 +21,7 @@ class _LandingPageState extends State<LandingPage> {
   IconData themeIcon = Icons.dark_mode;
   bool _showLoadingIndicator = false;
   String _loaderMessage = 'determining device location';
+  final weatherNotifier = ValueNotifier<String>('');
 
   void _toggleLoadingIndicator() =>
       setState(() => _showLoadingIndicator = !_showLoadingIndicator);
@@ -32,12 +33,19 @@ class _LandingPageState extends State<LandingPage> {
       final currentCity = await LocationService.getAddressFromLatLng(
           location.latitude, location.longitude);
       await citiesData.storeDefaultCity(currentCity!);
-      setState(() => _loaderMessage = 'getting things ready');
+      setState(() {
+        _loaderMessage = 'getting things ready';
+        weatherNotifier.value = currentCity;
+      });
       Timer(
         const Duration(seconds: 1),
         () {
           _toggleLoadingIndicator();
-          Get.offAll(() => const BasePage());
+          Get.offAll(
+            () => BasePage(
+              weatherNotifier: weatherNotifier,
+            ),
+          );
         },
       );
     } catch (_) {
@@ -75,9 +83,10 @@ class _LandingPageState extends State<LandingPage> {
                       Text(
                         'forekast',
                         style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.bold),
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: 30.0),
                       GestureButton(

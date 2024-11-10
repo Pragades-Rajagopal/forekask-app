@@ -10,7 +10,11 @@ import 'package:forekast_app/utils/themes.dart';
 import 'package:get/get.dart';
 
 class BasePage extends StatefulWidget {
-  const BasePage({super.key});
+  final ValueNotifier<String> weatherNotifier;
+  const BasePage({
+    super.key,
+    required this.weatherNotifier,
+  });
 
   @override
   State<BasePage> createState() => _BasePageState();
@@ -29,8 +33,6 @@ class _BasePageState extends State<BasePage> {
   CitiesData citiesDataModel = CitiesData();
   FavoritesData favoritesData = FavoritesData();
 
-  final _weatherNotifier = ValueNotifier<String>('');
-
   // Appbar titles
   static final List<String> _titles = [
     'forekast',
@@ -40,11 +42,7 @@ class _BasePageState extends State<BasePage> {
   @override
   void initState() {
     super.initState();
-    initStateMethods();
-  }
-
-  void initStateMethods() async {
-    await getLocation();
+    getLocation();
   }
 
   Future<void> getLocation() async {
@@ -56,18 +54,18 @@ class _BasePageState extends State<BasePage> {
     String defaultCity = await favoritesData.getDefaultFavorite();
     if (defaultCity != '') {
       setState(() {
-        _weatherNotifier.value = defaultCity;
+        widget.weatherNotifier.value = defaultCity;
       });
     } else if (defaultLocation != '' || defaultLocation != null) {
       setState(() {
-        _weatherNotifier.value = defaultLocation ?? '';
+        widget.weatherNotifier.value = defaultLocation ?? '';
       });
     }
   }
 
   void _updateSelectedCity(String city) {
     setState(() {
-      _weatherNotifier.value = city;
+      widget.weatherNotifier.value = city;
     });
     _pageController.jumpToPage(0);
   }
@@ -88,7 +86,7 @@ class _BasePageState extends State<BasePage> {
         children: [
           WeatherPage(
             key: ValueKey('WeatherPage$_currentIndex'),
-            selectedCity: _weatherNotifier,
+            selectedCity: widget.weatherNotifier,
           ),
           FavoritesPage(
             key: const ValueKey('FavoritesPage'),
@@ -166,7 +164,7 @@ class _BasePageState extends State<BasePage> {
   @override
   void dispose() {
     _pageController.dispose();
-    _weatherNotifier.dispose();
+    widget.weatherNotifier.dispose();
     super.dispose();
   }
 }

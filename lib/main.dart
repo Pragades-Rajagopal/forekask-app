@@ -44,7 +44,11 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: light,
           darkTheme: dark,
-          home: defaultLocation == '' ? const LandingPage() : const BasePage(),
+          home: defaultLocation == ''
+              ? const LandingPage()
+              : BasePage(
+                  weatherNotifier: ValueNotifier(''),
+                ),
         );
       },
     );

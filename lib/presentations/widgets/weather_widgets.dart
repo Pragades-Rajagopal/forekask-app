@@ -46,8 +46,21 @@ Widget getWeatherAnimation(String? condition) {
       assetPath = '$assetPath/mist.json';
       break;
     default:
+      return Center(
+        child: SizedBox(
+          width: 200,
+          height: 200,
+          child: getIcon(condition),
+        ),
+      );
   }
-  return Lottie.asset(assetPath);
+  return Center(
+    child: SizedBox(
+      width: 320,
+      height: 320,
+      child: Lottie.asset(assetPath),
+    ),
+  );
 }
 
 SizedBox div = const SizedBox(height: 16);
@@ -66,13 +79,7 @@ Widget currentWeather(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Center(
-          child: SizedBox(
-            width: 320,
-            height: 320,
-            child: getWeatherAnimation(weatherCondition),
-          ),
-        ),
+        getWeatherAnimation(weatherCondition),
         currentWeatherElement(
           temp,
           Theme.of(context).colorScheme.primary,
@@ -280,10 +287,10 @@ Widget dailyForecast(List data, String temperatureUnit, BuildContext context) {
   if (data[0]["err"] == 1) {
     return Container(
       alignment: Alignment.center,
-      child: const Text(
+      child: Text(
         "Daily forecast data unavailable!",
         style: TextStyle(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.tertiary,
         ),
       ),
     );
