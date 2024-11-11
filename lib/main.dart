@@ -24,7 +24,7 @@ Future<void> main() async {
   ));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final AdaptiveThemeMode? savedThemeMode;
   final String defaultLocation;
   const MyApp({
@@ -34,20 +34,32 @@ class MyApp extends StatelessWidget {
   });
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final weatherNotifier = ValueNotifier<String>('');
+  @override
+  void initState() {
+    super.initState();
+    setState(() => weatherNotifier.value = widget.defaultLocation);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AdaptiveTheme(
       light: lightTheme,
       dark: darkTheme,
-      initial: savedThemeMode ?? AdaptiveThemeMode.light,
+      initial: widget.savedThemeMode ?? AdaptiveThemeMode.light,
       builder: (light, dark) {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           theme: light,
           darkTheme: dark,
-          home: defaultLocation == ''
+          home: widget.defaultLocation == ''
               ? const LandingPage()
               : BasePage(
-                  weatherNotifier: ValueNotifier(''),
+                  weatherNotifier: weatherNotifier,
                 ),
         );
       },
