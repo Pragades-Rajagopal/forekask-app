@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Cities model
-/// - Handles current location
 /// - Handles all cities name for city search
 class CitiesData {
   static final CitiesData instance = CitiesData.internal();
@@ -16,24 +15,6 @@ class CitiesData {
 
   Future<void> _init() async {
     preferences ??= await SharedPreferences.getInstance();
-  }
-
-  /// Saves current location city upon app startup
-  Future<void> storeDefaultCity(String city) async {
-    await _init();
-    await preferences!.setString('default_city', city);
-  }
-
-  /// Retrieves current location city
-  Future<String?> getDefaultCity() async {
-    await _init();
-    return preferences!.getString('default_city');
-  }
-
-  /// Delete the current location city upon location reset
-  Future<void> removeDefaultCity() async {
-    await _init();
-    await preferences!.remove('default_city');
   }
 
   /// Stores all the cities for city search
@@ -167,5 +148,45 @@ class SettingsData {
     return {
       "selectedUnit": selectedUnit,
     };
+  }
+}
+
+class LocationData {
+  static final LocationData instance = LocationData.internal();
+  static SharedPreferences? preferences;
+
+  LocationData.internal();
+
+  factory LocationData() => instance;
+
+  Future<void> _init() async =>
+      preferences ??= await SharedPreferences.getInstance();
+
+  Future<void> saveLocationPermissionStatus(bool flag) async {
+    await _init();
+    await preferences!.setBool('is_location_enabled', flag);
+  }
+
+  Future<bool?> getLocationPermissionStatus() async {
+    await _init();
+    return preferences!.getBool('is_location_enabled');
+  }
+
+  Future<void> resetLocationPermissionStatus() async {
+    await _init();
+    await preferences!.remove('is_location_enabled');
+    await preferences!.remove('default_city');
+  }
+
+  /// Saves current location city upon app startup
+  Future<void> storeManualCity(String city) async {
+    await _init();
+    await preferences!.setString('default_city', city);
+  }
+
+  /// Retrieves current location city
+  Future<String> getManualCity() async {
+    await _init();
+    return preferences!.getString('default_city') ?? '';
   }
 }

@@ -4,33 +4,58 @@ import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:forekast_app/presentations/base.dart';
 import 'package:forekast_app/presentations/landing_page.dart';
 import 'package:forekast_app/services/cities_service.dart';
+import 'package:forekast_app/services/location_service.dart';
 import 'package:forekast_app/utils/themes.dart';
 import 'package:get/route_manager.dart';
 
+CitiesApi cities = CitiesApi();
+CitiesData citiesData = CitiesData();
+LocationData locationData = LocationData();
+
+Future<String> getLocationInfo() async {
+  final defaultLocation = await locationData.getManualCity();
+  if (defaultLocation.isNotEmpty) {
+    return defaultLocation;
+  }
+  try {
+    final bool? isLocationServiceAllowed =
+        await LocationData().getLocationPermissionStatus();
+    if (!isLocationServiceAllowed!) return '';
+    final location = await LocationService.getCurrentLocation();
+    final currentCity = await LocationService.getAddressFromLatLng(
+        location.latitude, location.longitude);
+    if (currentCity!.isNotEmpty) {
+      return currentCity;
+    } else {
+      return defaultLocation;
+    }
+  } catch (e) {
+    return defaultLocation;
+  }
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Get location
+  final String currentLocation = await getLocationInfo();
   // Store cities
-  CitiesApi cities = CitiesApi();
-  CitiesData citiesData = CitiesData();
   List<String> data = await cities.getCities();
   await citiesData.storeCities(data);
-  // Get default/ current location
-  final defaultLocation = await citiesData.getDefaultCity() ?? '';
   // Theming
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
   runApp(MyApp(
     savedThemeMode: savedThemeMode,
-    defaultLocation: defaultLocation,
+    currentLocation: currentLocation,
   ));
 }
 
 class MyApp extends StatefulWidget {
   final AdaptiveThemeMode? savedThemeMode;
-  final String defaultLocation;
+  final String currentLocation;
   const MyApp({
     super.key,
     this.savedThemeMode,
-    required this.defaultLocation,
+    required this.currentLocation,
   });
 
   @override
@@ -42,7 +67,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    setState(() => weatherNotifier.value = widget.defaultLocation);
+    setState(() => weatherNotifier.value = widget.currentLocation);
   }
 
   @override
@@ -56,11 +81,12 @@ class _MyAppState extends State<MyApp> {
           debugShowCheckedModeBanner: false,
           theme: light,
           darkTheme: dark,
-          home: widget.defaultLocation == ''
+          home: weatherNotifier.value == ''
               ? const LandingPage()
               : BasePage(
                   weatherNotifier: weatherNotifier,
                 ),
+          // home: const LandingPage(),
         );
       },
     );

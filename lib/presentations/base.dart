@@ -11,9 +11,11 @@ import 'package:get/get.dart';
 
 class BasePage extends StatefulWidget {
   final ValueNotifier<String> weatherNotifier;
+  final String? routeType;
   const BasePage({
     super.key,
     required this.weatherNotifier,
+    this.routeType,
   });
 
   @override
@@ -30,8 +32,8 @@ class _BasePageState extends State<BasePage> {
   BorderRadius searchBarRadius = BorderRadius.circular(30.0);
   List<String> citiesData = [];
   List<String> filteredCities = [];
-  CitiesData citiesDataModel = CitiesData();
   FavoritesData favoritesData = FavoritesData();
+  LocationData locationData = LocationData();
 
   // Appbar titles
   static final List<String> _titles = [
@@ -46,19 +48,17 @@ class _BasePageState extends State<BasePage> {
   }
 
   Future<void> getLocation() async {
-    final defaultLocation = await citiesDataModel.getDefaultCity();
+    final defaultLocation = await locationData.getManualCity();
     // Current/ default location to be shown in favorites page
-    setState(() {
-      currentLocation = defaultLocation!;
-    });
-    String defaultCity = await favoritesData.getDefaultFavorite();
-    if (defaultCity != '') {
+    if (defaultLocation.isNotEmpty) {
+      setState(() => currentLocation = defaultLocation);
+    } else {
+      setState(() => currentLocation = widget.weatherNotifier.value);
+    }
+    final favoriteAsDefaultCity = await favoritesData.getDefaultFavorite();
+    if (favoriteAsDefaultCity.isNotEmpty) {
       setState(() {
-        widget.weatherNotifier.value = defaultCity;
-      });
-    } else if (defaultLocation != '' || defaultLocation != null) {
-      setState(() {
-        widget.weatherNotifier.value = defaultLocation ?? '';
+        widget.weatherNotifier.value = favoriteAsDefaultCity;
       });
     }
   }
