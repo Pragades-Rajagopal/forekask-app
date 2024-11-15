@@ -11,11 +11,9 @@ import 'package:get/get.dart';
 
 class BasePage extends StatefulWidget {
   final ValueNotifier<String> weatherNotifier;
-  final String? routeType;
   const BasePage({
     super.key,
     required this.weatherNotifier,
-    this.routeType,
   });
 
   @override

@@ -37,16 +37,10 @@ class _LandingPageState extends State<LandingPage> {
         _loaderMessage = 'getting things ready';
         weatherNotifier.value = currentCity!;
       });
-      Timer(
-        const Duration(seconds: 1),
-        () {
-          _toggleLoadingIndicator();
-          Get.offAll(
-            () => BasePage(
-              weatherNotifier: weatherNotifier,
-            ),
-          );
-        },
+      Get.offAll(
+        () => BasePage(
+          weatherNotifier: weatherNotifier,
+        ),
       );
     } catch (_) {
       _toggleLoadingIndicator();
