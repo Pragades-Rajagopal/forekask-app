@@ -8,11 +8,8 @@ import 'package:forekast_app/services/location_service.dart';
 import 'package:forekast_app/utils/themes.dart';
 import 'package:get/route_manager.dart';
 
-CitiesApi cities = CitiesApi();
-CitiesData citiesData = CitiesData();
-LocationData locationData = LocationData();
-
 Future<String> getLocationInfo() async {
+  LocationData locationData = LocationData();
   final defaultLocation = await locationData.getManualCity();
   if (defaultLocation.isNotEmpty) {
     return defaultLocation;
@@ -36,6 +33,9 @@ Future<String> getLocationInfo() async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  CitiesApi cities = CitiesApi();
+  CitiesData citiesData = CitiesData();
   // Get location
   final String currentLocation = await getLocationInfo();
   // Store cities
@@ -43,6 +43,7 @@ Future<void> main() async {
   await citiesData.storeCities(data);
   // Theming
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
+
   runApp(MyApp(
     savedThemeMode: savedThemeMode,
     currentLocation: currentLocation,
