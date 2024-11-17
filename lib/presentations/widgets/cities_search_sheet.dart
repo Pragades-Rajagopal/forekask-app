@@ -19,6 +19,7 @@ class CitiesSearchSheet extends StatefulWidget {
 
 class CitiesSearchSheetState extends State<CitiesSearchSheet> {
   CitiesData citiesDataModel = CitiesData();
+  LocationData locationData = LocationData();
   GlobalKey searchKey = GlobalKey();
   final textController = TextEditingController();
   List<String> citiesData = [];
@@ -230,11 +231,13 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
       },
     ).then((selectedCity) async {
       if (selectedCity != null && widget.usageType == 'landing_page') {
+        final weatherNotifier = ValueNotifier<String>('');
         final city = selectedCity.toString().trim();
-        await citiesDataModel.storeDefaultCity(city);
+        await locationData.storeManualCity(city);
+        setState(() => weatherNotifier.value = city);
         Get.offAll(
           () => BasePage(
-            weatherNotifier: ValueNotifier(''),
+            weatherNotifier: weatherNotifier,
           ),
         );
       } else if (selectedCity != null) {

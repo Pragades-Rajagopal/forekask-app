@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Cities model
-/// - Handles current location
 /// - Handles all cities name for city search
 class CitiesData {
   static final CitiesData instance = CitiesData.internal();
@@ -10,31 +9,10 @@ class CitiesData {
 
   CitiesData.internal();
 
-  factory CitiesData() {
-    return instance;
-  }
+  factory CitiesData() => instance;
 
-  Future<void> _init() async {
-    preferences ??= await SharedPreferences.getInstance();
-  }
-
-  /// Saves current location city upon app startup
-  Future<void> storeDefaultCity(String city) async {
-    await _init();
-    await preferences!.setString('default_city', city);
-  }
-
-  /// Retrieves current location city
-  Future<String?> getDefaultCity() async {
-    await _init();
-    return preferences!.getString('default_city');
-  }
-
-  /// Delete the current location city upon location reset
-  Future<void> removeDefaultCity() async {
-    await _init();
-    await preferences!.remove('default_city');
-  }
+  Future<void> _init() async =>
+      preferences ??= await SharedPreferences.getInstance();
 
   /// Stores all the cities for city search
   Future<void> storeCities(List<String> data) async {
@@ -59,9 +37,8 @@ class FavoritesData {
 
   factory FavoritesData() => instance;
 
-  Future<void> _init() async {
-    preferences ??= await SharedPreferences.getInstance();
-  }
+  Future<void> _init() async =>
+      preferences ??= await SharedPreferences.getInstance();
 
   /// Saves a city as favorite
   Future<void> saveFavorites(List<Map<String, dynamic>> data) async {
@@ -150,9 +127,8 @@ class SettingsData {
 
   factory SettingsData() => instance;
 
-  Future<void> _init() async {
-    preferences ??= await SharedPreferences.getInstance();
-  }
+  Future<void> _init() async =>
+      preferences ??= await SharedPreferences.getInstance();
 
   /// Stores unit for weather information
   Future<void> storeUnitPreference(String selectedTheme) async {
@@ -167,5 +143,53 @@ class SettingsData {
     return {
       "selectedUnit": selectedUnit,
     };
+  }
+}
+
+/// Location service model
+/// - Handles the location service data
+/// - Handles the manually selected city
+class LocationData {
+  static final LocationData instance = LocationData.internal();
+  static SharedPreferences? preferences;
+
+  LocationData.internal();
+
+  factory LocationData() => instance;
+
+  Future<void> _init() async =>
+      preferences ??= await SharedPreferences.getInstance();
+
+  /// Saves whether the device location service is enabled or not
+  Future<void> saveLocationPermissionStatus(bool flag) async {
+    await _init();
+    await preferences!.setBool('is_location_enabled', flag);
+  }
+
+  /// Retrieves the location permission status
+  Future<bool?> getLocationPermissionStatus() async {
+    await _init();
+    return preferences!.getBool('is_location_enabled');
+  }
+
+  /// Removes the location permission status and manually selected city
+  ///
+  /// _Usage: This method will be invoked upon `reset location` trigger_
+  Future<void> resetLocationPermissionStatus() async {
+    await _init();
+    await preferences!.remove('is_location_enabled');
+    await preferences!.remove('manually_selected_city');
+  }
+
+  /// Saves the city which is manually selected without allowing location service
+  Future<void> storeManualCity(String city) async {
+    await _init();
+    await preferences!.setString('manually_selected_city', city);
+  }
+
+  /// Retrieves the manually selected city
+  Future<String> getManualCity() async {
+    await _init();
+    return preferences!.getString('manually_selected_city') ?? '';
   }
 }

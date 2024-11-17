@@ -29,24 +29,18 @@ class _LandingPageState extends State<LandingPage> {
   Future<void> getLocation() async {
     try {
       _toggleLoadingIndicator();
-      final location = await LocationService.getCurrentLocation(context);
+      final location = await LocationService.getLocationPermission(context);
       final currentCity = await LocationService.getAddressFromLatLng(
           location.latitude, location.longitude);
-      await citiesData.storeDefaultCity(currentCity!);
+      // await citiesData.storeDefaultCity(currentCity!);
       setState(() {
         _loaderMessage = 'getting things ready';
-        weatherNotifier.value = currentCity;
+        weatherNotifier.value = currentCity!;
       });
-      Timer(
-        const Duration(seconds: 1),
-        () {
-          _toggleLoadingIndicator();
-          Get.offAll(
-            () => BasePage(
-              weatherNotifier: weatherNotifier,
-            ),
-          );
-        },
+      Get.offAll(
+        () => BasePage(
+          weatherNotifier: weatherNotifier,
+        ),
       );
     } catch (_) {
       _toggleLoadingIndicator();

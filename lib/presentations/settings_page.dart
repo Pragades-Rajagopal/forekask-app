@@ -16,7 +16,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   SettingsData settingsData = SettingsData();
-  CitiesData citiesData = CitiesData();
+  LocationData locationData = LocationData();
   String selectedTheme = 'light';
   String selectedUnit = 'metric';
   List<String> themes = [
@@ -142,7 +142,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   Center(
                     child: GestureButton(
                       onTap: () async {
-                        await citiesData.removeDefaultCity();
+                        await locationData.resetLocationPermissionStatus();
                         Get.offAll(() => const LandingPage());
                       },
                       buttonText: 'reset location',
