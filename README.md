@@ -15,27 +15,25 @@ A simple minimalist weather application for Android and iOS (yet to be rolled ou
 
 ### Screenshots
 
-<div style="display: flex; justify-content: space-between; flex-wrap: wrap;">
-  <figure style="margin-right: 2px;">
-    <img src="screenshots/screenshot_1.png" width="161.25" height="349.5">
-    <figcaption>Forekast page (light)</figcaption>
-  </figure>
+<figure>
+<img src="screenshots/screenshot_1.png" width="161.25" height="349.5">
+<figcaption>Forekast page (light)</figcaption>
+</figure>
 
-  <figure style="margin-right: 2px;">
-    <img src="screenshots/screenshot_2.png" width="161.25" height="349.5">
-    <figcaption>Forekast page (dark)</figcaption>
-  </figure>
+<figure>
+<img src="screenshots/screenshot_2.png" width="161.25" height="349.5">
+<figcaption>Forekast page (dark)</figcaption>
+</figure>
 
-  <figure style="margin-right: 2px;">
-    <img src="screenshots/screenshot_3.png" width="161.25" height="349.5">
-    <figcaption>City search</figcaption>
-  </figure>
+<figure>
+<img src="screenshots/screenshot_3.png" width="161.25" height="349.5">
+<figcaption>City search</figcaption>
+</figure>
 
-  <figure>
-    <img src="screenshots/screenshot_4.png" width="161.25" height="349.5">
-    <figcaption>Favorites page</figcaption>
-  </figure>
-</div>
+<figure>
+<img src="screenshots/screenshot_4.png" width="161.25" height="349.5">
+<figcaption>Favorites page</figcaption>
+</figure>
 
 ### Links
 
