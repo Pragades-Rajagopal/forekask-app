@@ -4,9 +4,11 @@ import 'package:forekast_app/presentations/widgets/common_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Rounds the temperature to integer
-int roundTempValue(dynamic temp) {
-  return temp.round();
-}
+int roundTempValue(dynamic temp) => temp.round();
+
+/// Handles latitude and longitude type conversion
+double convertIntToDouble(dynamic value) =>
+    value is int ? value.toDouble() : value;
 
 /// Converts Unix epoch into date format 'Fri, Oct 6'
 ///

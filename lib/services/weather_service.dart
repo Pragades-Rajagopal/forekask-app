@@ -27,10 +27,11 @@ class WeatherApi {
           'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=${env["OPENWEATHER_API_KEY_DAILY"]}&units=$unit');
       var response = await http.get(url);
       var body = jsonDecode(response.body);
+      if (body?["cod"] == "404") return Weather.voidData();
       Weather weather = Weather.fromJSON(body);
       return weather;
     } catch (e) {
-      return Weather.voidData();
+      throw Exception('something went wrong');
     }
   }
 

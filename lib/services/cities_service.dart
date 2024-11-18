@@ -11,9 +11,10 @@ class CitiesApi {
     var url = Uri.parse('https://countriesnow.space/api/v0.1/countries');
     var response = await http.get(url);
     var body = jsonDecode(response.body);
-    for (var element in body['data']) {
-      for (var city in element["cities"]) {
-        cities.add(city);
+    for (var country in body['data']) {
+      var countryCode = country["iso2"];
+      for (var city in country["cities"]) {
+        cities.add('$city, $countryCode');
       }
     }
     return cities;

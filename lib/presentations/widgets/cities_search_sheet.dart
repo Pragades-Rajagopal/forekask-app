@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:forekast_app/presentations/base.dart';
+import 'package:forekast_app/presentations/widgets/rich_text.dart';
 import 'package:get/get.dart';
 
 class CitiesSearchSheet extends StatefulWidget {
@@ -24,6 +25,7 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
   final textController = TextEditingController();
   List<String> citiesData = [];
   List<String> filteredCities = [];
+  bool _searchTextChanged = false;
 
   @override
   void initState() {
@@ -75,7 +77,7 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
         return StatefulBuilder(
           builder: (context, setState) {
             return SizedBox(
-              height: MediaQuery.of(context).size.height * 0.88,
+              height: MediaQuery.of(context).size.height * 0.89,
               width: double.infinity,
               child: SingleChildScrollView(
                 physics: const BouncingScrollPhysics(),
@@ -83,93 +85,85 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: 48,
-                      width: 360,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 5,
-                              ),
-                              child: TextField(
-                                key: searchKey,
-                                controller: textController,
-                                decoration: InputDecoration(
-                                  // contentPadding: const EdgeInsets.all(10.0),
-                                  hintText: 'search city',
-                                  hintStyle: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.tertiary,
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: searchBarRadius,
-                                    borderSide: const BorderSide(
-                                      width: 0.0,
-                                      color: Colors.transparent,
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: searchBarRadius,
-                                    borderSide: const BorderSide(
-                                      color: Colors.transparent,
-                                    ),
-                                  ),
-                                  filled: true,
-                                  fillColor: Colors.white12,
-                                  suffixIcon: IconButton(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                    icon:
-                                        const Icon(CupertinoIcons.delete_left),
-                                    style: const ButtonStyle(
-                                      splashFactory: NoSplash.splashFactory,
-                                      overlayColor: WidgetStatePropertyAll(
-                                          Colors.transparent),
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        textController.text = '';
-                                        filteredCities.clear();
-                                      });
-                                    },
-                                  ),
-                                  prefixIcon: IconButton(
-                                    color:
-                                        Theme.of(context).colorScheme.secondary,
-                                    icon: const Icon(Icons.search),
-                                    style: const ButtonStyle(
-                                      splashFactory: NoSplash.splashFactory,
-                                      overlayColor: WidgetStatePropertyAll(
-                                          Colors.transparent),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.pop(
-                                          context, textController.text);
-                                      setState(() {
-                                        textController.text = '';
-                                        filteredCities.clear();
-                                      });
-                                    },
-                                  ),
-                                ),
-                                cursorColor:
-                                    Theme.of(context).colorScheme.secondary,
-                                style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                                onChanged: (value) {
-                                  filterCities(value, setState);
-                                },
+                      height: 44,
+                      width: 380,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 5,
+                        ),
+                        child: TextField(
+                          key: searchKey,
+                          controller: textController,
+                          decoration: InputDecoration(
+                            hintText: 'search city',
+                            hintStyle: TextStyle(
+                              color: Theme.of(context).colorScheme.tertiary,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: searchBarRadius,
+                              borderSide: const BorderSide(
+                                width: 0.0,
+                                color: Colors.transparent,
                               ),
                             ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: searchBarRadius,
+                              borderSide: const BorderSide(
+                                color: Colors.transparent,
+                              ),
+                            ),
+                            filled: true,
+                            fillColor: Colors.white12,
+                            suffixIcon: IconButton(
+                              color: Theme.of(context).colorScheme.secondary,
+                              icon: const Icon(CupertinoIcons.delete_left),
+                              style: const ButtonStyle(
+                                splashFactory: NoSplash.splashFactory,
+                                overlayColor:
+                                    WidgetStatePropertyAll(Colors.transparent),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  textController.text = '';
+                                  filteredCities.clear();
+                                });
+                              },
+                            ),
+                            prefixIcon: IconButton(
+                              color: Theme.of(context).colorScheme.secondary,
+                              icon: const Icon(Icons.search),
+                              style: const ButtonStyle(
+                                splashFactory: NoSplash.splashFactory,
+                                overlayColor:
+                                    WidgetStatePropertyAll(Colors.transparent),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context, textController.text);
+                                setState(() {
+                                  textController.text = '';
+                                  filteredCities.clear();
+                                });
+                              },
+                            ),
                           ),
-                        ],
+                          cursorColor: Theme.of(context).colorScheme.secondary,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          onChanged: (value) {
+                            setState(() => _searchTextChanged = true);
+                            filterCities(value, setState);
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(
                       height: 12.0,
                     ),
+                    if (filteredCities.isEmpty) ...{
+                      getMessage(context),
+                    },
                     ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
@@ -181,21 +175,15 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
                             setState(() {
                               filteredCities.clear();
                               textController.text = '';
+                              _searchTextChanged = false;
                             });
                           },
                           child: Card(
+                            elevation: 0.0,
                             color: Colors.transparent,
                             margin: const EdgeInsets.symmetric(
-                              horizontal: 20.0,
+                              horizontal: 28.0,
                               vertical: 5.0,
-                            ),
-                            shape: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .tertiary
-                                    .withOpacity(0.3),
-                              ),
                             ),
                             child: Container(
                               color: Theme.of(context).colorScheme.surface,
@@ -234,7 +222,10 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
         final weatherNotifier = ValueNotifier<String>('');
         final city = selectedCity.toString().trim();
         await locationData.storeManualCity(city);
-        setState(() => weatherNotifier.value = city);
+        setState(() {
+          weatherNotifier.value = city;
+          _searchTextChanged = false;
+        });
         Get.offAll(
           () => BasePage(
             weatherNotifier: weatherNotifier,
@@ -244,6 +235,7 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
         final city = selectedCity.toString().trim();
         setState(() {
           widget.onValueChanged(city);
+          _searchTextChanged = false;
         });
       }
     });
@@ -293,5 +285,31 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
         ),
       );
     }
+  }
+
+  /// Show messages when the sheet is opened and on typed
+  Widget getMessage(BuildContext context) {
+    return SizedBox(
+      width: 380.0,
+      child: RichTextWidget(
+        color: Theme.of(context).colorScheme.tertiary,
+        fontSize: Theme.of(context).textTheme.titleSmall?.fontSize,
+        inlineSpans: _searchTextChanged
+            ? const [
+                TextSpan(text: "city not found? Try hitting "),
+                WidgetSpan(child: Icon(CupertinoIcons.search, size: 16)),
+              ]
+            : const [
+                TextSpan(text: "search "),
+                TextSpan(
+                  text: "Oslo,NO",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                TextSpan(
+                    text:
+                        " for example (country code will help provide exact location)"),
+              ],
+      ),
+    );
   }
 }

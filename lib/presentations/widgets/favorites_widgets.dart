@@ -29,12 +29,6 @@ Card favoriteCardsWidget(
     fontWeight: FontWeight.bold,
     color: Theme.of(context).colorScheme.secondary,
   );
-  var cardCityStyleItalic = TextStyle(
-    fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
-    fontWeight: FontWeight.bold,
-    fontStyle: FontStyle.italic,
-    color: Theme.of(context).colorScheme.secondary,
-  );
   return Card(
     margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
     shape: RoundedRectangleBorder(
@@ -77,34 +71,26 @@ Card favoriteCardsWidget(
                   children: [
                     Row(
                       children: [
-                        if (favoritesList[index]["default"] == true) ...{
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    favoritesData[index]["city"],
-                                    style: cardCityStyleItalic,
-                                    softWrap: true,
-                                  ),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  favoritesData[index]["city"],
+                                  style: cardCityStyle,
+                                  softWrap: true,
                                 ),
+                              ),
+                              if (favoritesList[index]["default"] == true) ...{
                                 Icon(
                                   CupertinoIcons.house_alt_fill,
                                   color:
                                       Theme.of(context).colorScheme.secondary,
                                 ),
-                              ],
-                            ),
+                              }
+                            ],
                           ),
-                        } else ...{
-                          Expanded(
-                            child: Text(
-                              favoritesData[index]["city"],
-                              style: cardCityStyle,
-                              softWrap: true,
-                            ),
-                          ),
-                        }
+                        ),
                       ],
                     ),
                     Row(

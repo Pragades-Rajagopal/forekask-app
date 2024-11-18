@@ -56,8 +56,8 @@ class Weather {
     description = json["weather"][0]["description"];
     icon = json["weather"][0]["icon"];
     country = json["sys"]["country"];
-    lat = json["coord"]["lat"];
-    lon = json["coord"]["lon"];
+    lat = convertIntToDouble(json["coord"]["lat"]);
+    lon = convertIntToDouble(json["coord"]["lon"]);
     degree = getDirection(json["wind"]["deg"]);
     timestamp = getTime(json["dt"] + json["timezone"]);
     sunrise = getTime(

@@ -78,7 +78,7 @@ class _WeatherPageState extends State<WeatherPage> {
       windSpeed = settings["selectedUnit"] == 'metric' ? 'm/s' : 'mph';
       return data;
     } catch (e) {
-      return null;
+      throw Exception(e);
     }
   }
 
@@ -92,53 +92,52 @@ class _WeatherPageState extends State<WeatherPage> {
   FutureBuilder<void> weatherFutureBuilder() {
     return FutureBuilder<Weather?>(
       builder: (context, snapshot) {
-        try {
-          if (snapshot.connectionState == ConnectionState.done) {
-            final snapshotData = snapshot.data;
-            if (snapshotData != null && snapshotData.cityName!.isNotEmpty) {
-              return SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  children: [weatherData(data)],
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                "something went wrong",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.tertiary,
                 ),
-              );
-            } else {
-              return Padding(
-                padding: const EdgeInsets.all(18.0),
-                child: Center(
-                  child: CommonWidgets.myRichText(
-                    context,
-                    'Oops! Weather info not available for',
-                    text2: widget.selectedCity.value,
-                  ),
-                ),
-              );
-            }
-          } else if (snapshot.connectionState == ConnectionState.waiting) {
-            return CommonWidgets.myLoadingIndicator(
-              context,
-              text1: 'getting weather info for',
-              text2: widget.selectedCity.value,
+              ),
             );
           }
-          return Center(
-            child: Text(
-              'Something went wrong',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.tertiary,
+          final snapshotData = snapshot.data;
+          if (snapshotData != null && snapshotData.cityName!.isNotEmpty) {
+            return SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                children: [weatherData(data)],
               ),
-            ),
-          );
-        } catch (e) {
-          return Center(
-            child: Text(
-              'Something went wrong',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.tertiary,
+            );
+          } else {
+            return Padding(
+              padding: const EdgeInsets.all(18.0),
+              child: Center(
+                child: CommonWidgets.myRichText(
+                  context,
+                  'Oops! Weather info not available for',
+                  text2: widget.selectedCity.value,
+                ),
               ),
-            ),
+            );
+          }
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          return CommonWidgets.myLoadingIndicator(
+            context,
+            text1: 'getting weather info for',
+            text2: widget.selectedCity.value,
           );
         }
+        return Center(
+          child: Text(
+            'oops',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.tertiary,
+            ),
+          ),
+        );
       },
       future: getData(),
     );
