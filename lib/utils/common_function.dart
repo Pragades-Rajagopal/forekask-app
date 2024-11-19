@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:forekast_app/presentations/widgets/common_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -108,4 +109,28 @@ void launchMapsUrl(BuildContext context, double lat, double lon) async {
       CommonWidgets.mySnackBar(context, 'Unable to open maps');
     }
   }
+}
+
+/// Converts country name to country code
+///
+/// Eg: `Oslo, Norway` > `Oslo, NO`
+Future<String> countryNameToCodeConvertor(String value) async {
+  Map<String, String>? ccMap = await CitiesData().getCountryCodeMap();
+  if (ccMap == null) {
+    return value;
+  }
+  if (!value.contains(', ')) {
+    return value;
+  }
+  List<String> parts = value.split(', ');
+  if (parts.length != 2) {
+    return value;
+  }
+  final [city, countryName] = [parts[0], parts[1]];
+  for (var entry in ccMap.entries) {
+    if (entry.value.toLowerCase() == countryName.toLowerCase()) {
+      return '$city,${entry.key}';
+    }
+  }
+  return value;
 }

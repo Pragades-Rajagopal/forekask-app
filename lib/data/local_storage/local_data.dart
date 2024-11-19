@@ -25,6 +25,25 @@ class CitiesData {
     await _init();
     return preferences!.getStringList('cities_list');
   }
+
+  /// Stores country-code map
+  Future<void> storeCountryCodeMap(Map<String, String> map) async {
+    await _init();
+    String jsonData = json.encode(map);
+    await preferences!.setString('country_code_map', jsonData);
+  }
+
+  /// Retrieves country-code map
+  Future<Map<String, String>?> getCountryCodeMap() async {
+    await _init();
+    String? data = preferences!.getString('country_code_map');
+    if (data != null) {
+      final decodedMap = json.decode(data);
+      return decodedMap.map<String, String>(
+          (key, value) => MapEntry(key.toString(), value.toString()));
+    }
+    return null;
+  }
 }
 
 /// Favorites model

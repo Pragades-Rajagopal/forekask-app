@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:http/http.dart' as http;
 
 /// Cities API model
@@ -8,15 +9,20 @@ class CitiesApi {
   /// Retrieves all cities for city search
   Future<List<String>> getCities() async {
     List<String> cities = [];
+    Map<String, String> cityCountryMap = {};
     var url = Uri.parse('https://countriesnow.space/api/v0.1/countries');
     var response = await http.get(url);
     var body = jsonDecode(response.body);
     for (var country in body['data']) {
       var countryCode = country["iso2"];
+      var countryName = country["country"];
       for (var city in country["cities"]) {
-        cities.add('$city, $countryCode');
+        cities.add('$city, $countryName');
+        cityCountryMap[countryCode] = countryName;
       }
     }
+    // Stores the country-code map
+    await CitiesData().storeCountryCodeMap(cityCountryMap);
     return cities;
   }
 

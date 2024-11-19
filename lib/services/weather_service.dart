@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:forekast_app/data/local_storage/local_data.dart';
+import 'package:forekast_app/utils/common_function.dart';
 import 'package:http/http.dart' as http;
 import 'package:forekast_app/config/dotenv.dart';
 import 'package:forekast_app/data/models/weather_model.dart';
@@ -23,8 +24,9 @@ class WeatherApi {
       // Get the API key from .env file
       final env = await parseStringToMap(assetsFileName: '.env');
       String unit = await getUnitPreference();
+      String parsedCity = await countryNameToCodeConvertor(city!);
       var url = Uri.parse(
-          'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=${env["OPENWEATHER_API_KEY_DAILY"]}&units=$unit');
+          'https://api.openweathermap.org/data/2.5/weather?q=$parsedCity&appid=${env["OPENWEATHER_API_KEY_DAILY"]}&units=$unit');
       var response = await http.get(url);
       var body = jsonDecode(response.body);
       if (body?["cod"] == "404") return Weather.voidData();

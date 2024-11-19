@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:forekast_app/data/models/favorites_model.dart';
+import 'package:forekast_app/utils/common_function.dart';
 import 'package:http/http.dart' as http;
 import 'package:forekast_app/config/dotenv.dart';
 
@@ -15,9 +16,10 @@ class FavoriteWeather {
   Future<SingleFavoriteWeather> getWeatherForFavoriteCity(String city) async {
     try {
       final env = await parseStringToMap(assetsFileName: '.env');
+      String parsedCity = await countryNameToCodeConvertor(city);
       Map<String, dynamic> settings = await settingsData.getPreferences();
       var url = Uri.parse(
-          'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=${env["OPENWEATHER_API_KEY_DAILY"]}&units=${settings["selectedUnit"]}');
+          'https://api.openweathermap.org/data/2.5/weather?q=$parsedCity&appid=${env["OPENWEATHER_API_KEY_DAILY"]}&units=${settings["selectedUnit"]}');
       var response = await http.get(url);
       var body = jsonDecode(response.body);
       SingleFavoriteWeather weather = SingleFavoriteWeather.fromJSON(body);

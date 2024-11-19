@@ -33,14 +33,15 @@ Future<String> getLocationInfo() async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  CitiesApi cities = CitiesApi();
   CitiesData citiesData = CitiesData();
+  final citiesDataList = await citiesData.getCities();
+  // Store cities if not stored
+  if (citiesDataList == null || citiesDataList.isEmpty) {
+    List<String> data = await CitiesApi().getCities();
+    await citiesData.storeCities(data);
+  }
   // Get location
   final String currentLocation = await getLocationInfo();
-  // Store cities
-  List<String> data = await cities.getCities();
-  await citiesData.storeCities(data);
   // Theming
   final savedThemeMode = await AdaptiveTheme.getThemeMode();
 

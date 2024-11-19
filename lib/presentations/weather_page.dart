@@ -72,7 +72,10 @@ class _WeatherPageState extends State<WeatherPage> {
     try {
       data = await client.getCurrentWeather(widget.selectedCity.value);
       dailyData = await client.getDailyWeather(data?.lat, data?.lon);
-      country = await citiesApi.getCountryName('${data?.country}');
+      Map<String, String>? ccMap = await CitiesData().getCountryCodeMap();
+      // Check the local data first, if not fetch from network
+      country = ccMap![data?.country] ??
+          await citiesApi.getCountryName('${data?.country}');
       Map<String, dynamic> settings = await settingsData.getPreferences();
       temperatureUnit = settings["selectedUnit"] == 'metric' ? '°C' : '°F';
       windSpeed = settings["selectedUnit"] == 'metric' ? 'm/s' : 'mph';
@@ -96,10 +99,11 @@ class _WeatherPageState extends State<WeatherPage> {
           if (snapshot.hasError) {
             return Center(
               child: Text(
-                "something went wrong",
+                "unable to provide weather info right now",
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.tertiary,
                 ),
+                textAlign: TextAlign.center,
               ),
             );
           }
