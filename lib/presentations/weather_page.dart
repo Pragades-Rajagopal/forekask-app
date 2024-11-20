@@ -252,6 +252,7 @@ class _WeatherPageState extends State<WeatherPage> {
                   ),
                   onPressed: () async {
                     if (favoriteButton.value == addToFavText) {
+                      // TODO: check if the value has country name, if not append it (manual user input)
                       await favoriteWeather
                           .saveFavorites(widget.selectedCity.value);
                     }

@@ -41,11 +41,13 @@ class FavoriteWeather {
       List<SingleFavoriteWeather> responses = await Future.wait(futures);
       List<Map<String, dynamic>> list = [];
       for (var i in responses) {
+        var countryName = await getCountryNameForCode(i.country!);
         list.add({
           "tempMin": i.tempMin,
           "tempMax": i.tempMax,
           "temp": i.temp,
-          "city": i.cityName,
+          "city":
+              i.country != null ? '${i.cityName}, $countryName' : i.cityName,
           "icon": i.icon,
           "description": i.description,
         });

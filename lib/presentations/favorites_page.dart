@@ -5,6 +5,7 @@ import 'package:forekast_app/presentations/widgets/common_widgets.dart';
 import 'package:forekast_app/presentations/widgets/favorites_widgets.dart';
 import 'package:forekast_app/services/favorites_service.dart';
 import 'package:forekast_app/services/weather_service.dart';
+import 'package:forekast_app/utils/common_function.dart';
 
 class FavoritesPage extends StatefulWidget {
   final Function(String) onCitySelected;
@@ -46,11 +47,15 @@ class _FavoritesPageState extends State<FavoritesPage> {
     if (widget.currentLocation.isNotEmpty) {
       Weather currentLocationWeather_ =
           await weatherApi.getCurrentWeather(widget.currentLocation);
+      var countryName =
+          await getCountryNameForCode(currentLocationWeather_.country!);
       setState(() {
         currentLocationWeatherData["city"] =
             currentLocationWeather_.cityName!.isEmpty
                 ? ''
-                : currentLocationWeather_.cityName;
+                : countryName.isNotEmpty
+                    ? '${currentLocationWeather_.cityName}, $countryName'
+                    : currentLocationWeather_.cityName;
         currentLocationWeatherData["temp"] = currentLocationWeather_.temp;
         currentLocationWeatherData["tempMax"] = currentLocationWeather_.tempMax;
         currentLocationWeatherData["tempMin"] = currentLocationWeather_.tempMin;

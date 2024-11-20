@@ -134,3 +134,11 @@ Future<String> countryNameToCodeConvertor(String value) async {
   }
   return value;
 }
+
+Future<String> getCountryNameForCode(String code) async {
+  Map<String, String>? ccMap = await CitiesData().getCountryCodeMap();
+  if (ccMap == null) {
+    return code;
+  }
+  return ccMap[code]!;
+}

@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:forekast_app/presentations/widgets/rich_text.dart';
 import 'package:forekast_app/presentations/widgets/weather_widgets.dart';
 
 Card favoriteCardsWidget(
@@ -11,7 +12,6 @@ Card favoriteCardsWidget(
 ) {
   var cardDescrStyle = TextStyle(
     fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
-    // fontWeight: FontWeight.bold,
     color: Theme.of(context).colorScheme.secondary,
   );
   var cardTempStyle = TextStyle(
@@ -24,11 +24,19 @@ Card favoriteCardsWidget(
     fontWeight: FontWeight.bold,
     color: Theme.of(context).colorScheme.secondary,
   );
-  var cardCityStyle = TextStyle(
-    fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
-    fontWeight: FontWeight.bold,
-    color: Theme.of(context).colorScheme.secondary,
-  );
+  var cardCityStyle = Theme.of(context).textTheme.bodyLarge!.copyWith(
+        fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
+        fontWeight: FontWeight.bold,
+        color: Theme.of(context).colorScheme.secondary,
+      );
+  var cardCountryStyle = Theme.of(context).textTheme.bodyMedium!.copyWith(
+        fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
+        color: Theme.of(context).colorScheme.secondary,
+      );
+  List<String> cityParts =
+      favoritesData[index]["city"].toString().contains(', ')
+          ? favoritesData[index]["city"].toString().split(', ')
+          : [favoritesData[index]["city"], ''];
   return Card(
     margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
     shape: RoundedRectangleBorder(
@@ -75,10 +83,21 @@ Card favoriteCardsWidget(
                           child: Row(
                             children: [
                               Expanded(
-                                child: Text(
-                                  favoritesData[index]["city"],
-                                  style: cardCityStyle,
-                                  softWrap: true,
+                                child: RichTextWidget(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  textAlign: TextAlign.start,
+                                  inlineSpans: [
+                                    TextSpan(
+                                      text: cityParts[0],
+                                      style: cardCityStyle,
+                                    ),
+                                    if (cityParts[1].isNotEmpty) ...{
+                                      TextSpan(
+                                        text: ', ${cityParts[1]}',
+                                        style: cardCountryStyle,
+                                      )
+                                    },
+                                  ],
                                 ),
                               ),
                               if (favoritesList[index]["default"] == true) ...{
@@ -167,11 +186,19 @@ Card currentLocationCardWidget(
     fontWeight: FontWeight.bold,
     color: Theme.of(context).colorScheme.secondary,
   );
-  var cardCityStyle = TextStyle(
-    fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
-    fontWeight: FontWeight.bold,
-    color: Theme.of(context).colorScheme.secondary,
-  );
+  var cardCityStyle = Theme.of(context).textTheme.bodyLarge!.copyWith(
+        fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
+        fontWeight: FontWeight.bold,
+        color: Theme.of(context).colorScheme.secondary,
+      );
+  var cardCountryStyle = Theme.of(context).textTheme.bodyMedium!.copyWith(
+        fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
+        color: Theme.of(context).colorScheme.secondary,
+      );
+  // TODO: Write a common function
+  List<String> cityParts = data["city"].toString().contains(', ')
+      ? data["city"].toString().split(', ')
+      : [data["city"], ''];
   return Card(
     margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
     shape: RoundedRectangleBorder(
@@ -218,10 +245,26 @@ Card currentLocationCardWidget(
                           child: Row(
                             children: [
                               Expanded(
-                                child: Text(
-                                  data["city"],
-                                  style: cardCityStyle,
-                                  softWrap: true,
+                                // child: Text(
+                                //   data["city"],
+                                //   style: cardCityStyle,
+                                //   softWrap: true,
+                                // ),
+                                child: RichTextWidget(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  textAlign: TextAlign.start,
+                                  inlineSpans: [
+                                    TextSpan(
+                                      text: cityParts[0],
+                                      style: cardCityStyle,
+                                    ),
+                                    if (cityParts[1].isNotEmpty) ...{
+                                      TextSpan(
+                                        text: ', ${cityParts[1]}',
+                                        style: cardCountryStyle,
+                                      )
+                                    },
+                                  ],
                                 ),
                               ),
                               Icon(
