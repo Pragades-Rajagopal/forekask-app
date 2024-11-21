@@ -6,6 +6,7 @@ import 'package:forekast_app/presentations/widgets/favorites_widgets.dart';
 import 'package:forekast_app/services/favorites_service.dart';
 import 'package:forekast_app/services/weather_service.dart';
 import 'package:forekast_app/utils/common_function.dart';
+import 'package:forekast_app/utils/common_ui.dart';
 
 class FavoritesPage extends StatefulWidget {
   final Function(String) onCitySelected;
@@ -95,10 +96,15 @@ class _FavoritesPageState extends State<FavoritesPage> {
       builder: (context, snapshot) {
         try {
           if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError) {
+              return errorWidget(context);
+            }
             if (favoritesData.isEmpty) {
               return Center(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: currentLocationWeatherData["city"] != ''
+                      ? MainAxisAlignment.start
+                      : MainAxisAlignment.center,
                   children: [
                     if (currentLocationWeatherData["city"] != '') ...{
                       currentLocationWeatherCard(
@@ -147,23 +153,9 @@ class _FavoritesPageState extends State<FavoritesPage> {
               text1: 'loading your favorites...',
             );
           }
-          return Center(
-            child: Text(
-              'Something went wrong',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.tertiary,
-              ),
-            ),
-          );
+          return errorWidget(context);
         } catch (e) {
-          return Center(
-            child: Text(
-              'Something went wrong',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.tertiary,
-              ),
-            ),
-          );
+          return errorWidget(context);
         }
       },
     );
@@ -282,8 +274,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
                   },
                   child: favoriteCardsWidget(
                     context,
-                    favoritesData,
-                    favoritesList,
+                    favoritesData[index],
+                    favoritesList[index],
                     temperatureUnit,
                     index,
                   ),

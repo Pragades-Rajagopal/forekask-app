@@ -20,27 +20,29 @@ class CommonWidgets {
     String text2 = '',
     String text3 = '',
   }) {
+    TextTheme textTheme = Theme.of(context).textTheme;
+    ColorScheme colorScheme = Theme.of(context).colorScheme;
     return RichText(
       text: TextSpan(
         text: text1,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.secondary,
-          fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
+        style: textTheme.bodyMedium!.copyWith(
+          color: colorScheme.secondary,
+          fontSize: textTheme.bodyMedium?.fontSize,
         ),
         children: [
           TextSpan(
             text: ' $text2',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.secondary,
-              fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
+            style: textTheme.bodyMedium!.copyWith(
+              color: colorScheme.secondary,
+              fontSize: textTheme.bodyMedium?.fontSize,
               fontWeight: FontWeight.bold,
             ),
           ),
           TextSpan(
               text: ' $text3',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.secondary,
-                fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
+              style: textTheme.bodyMedium!.copyWith(
+                color: colorScheme.secondary,
+                fontSize: textTheme.bodyMedium?.fontSize,
               )),
         ],
       ),
