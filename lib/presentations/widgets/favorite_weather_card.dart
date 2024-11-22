@@ -23,6 +23,7 @@ class FavoriteWeatherCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
+      shadowColor: Colors.transparent,
       color: Theme.of(context).colorScheme.primaryContainer,
       child: SafeArea(
         child: Row(
