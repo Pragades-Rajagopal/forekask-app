@@ -124,12 +124,11 @@ class _BasePageState extends State<BasePage> {
       elevation: 0,
       automaticallyImplyLeading: false,
       backgroundColor: Theme.of(context).colorScheme.surface,
-      title: Text(
+      title: commonText(
+        context,
         title,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 20.0,
-        ),
+        fontWeight: FontWeight.bold,
+        fontSize: 20.0,
       ),
       centerTitle: true,
       actions: [

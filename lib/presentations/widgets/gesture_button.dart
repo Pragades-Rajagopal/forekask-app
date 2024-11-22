@@ -27,6 +27,7 @@ class GestureButton extends StatelessWidget {
             buttonText,
             style: TextStyle(
               color: Theme.of(context).colorScheme.primary,
+              fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
               fontWeight: FontWeight.bold,
             ),
             textAlign: TextAlign.center,

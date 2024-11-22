@@ -70,3 +70,28 @@ Map<String, TextStyle> cardStyleComponents(BuildContext context) {
     ),
   };
 }
+
+Text commonText(
+  BuildContext context,
+  String message, {
+  Color? color,
+  double? fontSize,
+  FontWeight? fontWeight,
+  TextAlign? textAlign,
+}) {
+  TextTheme textTheme = Theme.of(context).textTheme;
+  ColorScheme colorScheme = Theme.of(context).colorScheme;
+  color ??= colorScheme.primary;
+  fontSize ??= textTheme.bodySmall?.fontSize;
+  fontWeight ??= FontWeight.normal;
+  textAlign ??= TextAlign.start;
+  return Text(
+    message,
+    style: TextStyle(
+      color: color,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+    ),
+    textAlign: textAlign,
+  );
+}

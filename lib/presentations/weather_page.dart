@@ -154,13 +154,12 @@ class _WeatherPageState extends State<WeatherPage> {
           const SizedBox(
             height: 18.0,
           ),
-          Text(
+          commonText(
+            context,
             'additional information',
-            style: TextStyle(
-              fontSize: 18.0,
-              color: Theme.of(context).colorScheme.tertiary,
-              fontWeight: FontWeight.bold,
-            ),
+            fontSize: 18.0,
+            color: Theme.of(context).colorScheme.tertiary,
+            fontWeight: FontWeight.bold,
           ),
           additionalInformation(
             "${data!.wind}$windSpeed ${data!.degree}",
@@ -176,13 +175,12 @@ class _WeatherPageState extends State<WeatherPage> {
           const SizedBox(
             height: 18.0,
           ),
-          Text(
+          commonText(
+            context,
             'daily forecast',
-            style: TextStyle(
-              fontSize: 18.0,
-              color: Theme.of(context).colorScheme.tertiary,
-              fontWeight: FontWeight.bold,
-            ),
+            fontSize: 18.0,
+            color: Theme.of(context).colorScheme.tertiary,
+            fontWeight: FontWeight.bold,
           ),
           const SizedBox(
             height: 4.0,

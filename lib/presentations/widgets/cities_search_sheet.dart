@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:forekast_app/data/local_storage/local_data.dart';
 import 'package:forekast_app/presentations/base.dart';
+import 'package:forekast_app/presentations/widgets/gesture_button.dart';
 import 'package:forekast_app/presentations/widgets/rich_text.dart';
+import 'package:forekast_app/utils/common_ui.dart';
 import 'package:get/get.dart';
 
 class CitiesSearchSheet extends StatefulWidget {
@@ -36,6 +38,8 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
   void initStateMethods() async {
     await getCitiesFunc();
   }
+
+  void openCitySearchSheet() => _searchBottomSheet();
 
   Future<void> getCitiesFunc() async {
     List<String>? data = await citiesDataModel.getCities();
@@ -191,17 +195,15 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  commonText(
+                                    context,
                                     filteredCities[index],
-                                    style: TextStyle(
-                                      fontSize: Theme.of(context)
-                                          .textTheme
-                                          .labelSmall
-                                          ?.fontSize,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .secondary,
-                                    ),
+                                    fontSize: Theme.of(context)
+                                        .textTheme
+                                        .labelSmall
+                                        ?.fontSize,
+                                    color:
+                                        Theme.of(context).colorScheme.secondary,
                                   ),
                                 ],
                               ),
@@ -244,29 +246,9 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
   @override
   Widget build(BuildContext context) {
     if (widget.usageType == 'landing_page') {
-      return GestureDetector(
-        onTap: () async {
-          _searchBottomSheet();
-        },
-        child: Container(
-          width: 300,
-          padding: const EdgeInsets.all(14.0),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.tertiary.withOpacity(0.2),
-            borderRadius: const BorderRadius.all(
-              Radius.circular(100.0),
-            ),
-          ),
-          child: Center(
-            child: Text(
-              'choose city manually',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
+      return GestureButton(
+        onTap: openCitySearchSheet,
+        buttonText: 'choose city manually',
       );
     } else {
       return TextButton(
@@ -306,8 +288,9 @@ class CitiesSearchSheetState extends State<CitiesSearchSheet> {
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 TextSpan(
-                    text:
-                        " for example (country code will help provide exact location)"),
+                  text:
+                      " for example (country code will help provide exact location)",
+                ),
               ],
       ),
     );

@@ -74,13 +74,6 @@ class FavoriteWeatherCard extends StatelessWidget {
                                         style: styleComponents[
                                             "cardCityLargeBold"],
                                       ),
-                                      if (cityParts[1].isNotEmpty) ...{
-                                        TextSpan(
-                                          text: ', ${cityParts[1]}',
-                                          style: styleComponents[
-                                              "cardCountryStyle"],
-                                        )
-                                      },
                                     ],
                                   ),
                                 ),
@@ -99,12 +92,23 @@ class FavoriteWeatherCard extends StatelessWidget {
                       Row(
                         children: [
                           Expanded(
-                            child: Text(
-                              weatherData["description"],
-                              style: styleComponents["cardDescrSmall"],
-                              softWrap: true,
+                            child: RichTextWidget(
+                              color: Theme.of(context).colorScheme.primary,
+                              textAlign: TextAlign.start,
+                              inlineSpans: [
+                                if (cityParts[1].isNotEmpty) ...{
+                                  TextSpan(
+                                    text: '${cityParts[1]} • ',
+                                    style: styleComponents["cardCountryStyle"],
+                                  ),
+                                },
+                                TextSpan(
+                                  text: weatherData["description"],
+                                  style: styleComponents["cardDescrSmall"],
+                                )
+                              ],
                             ),
-                          ),
+                          )
                         ],
                       ),
                     ],
