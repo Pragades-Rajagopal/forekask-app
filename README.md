@@ -37,6 +37,6 @@ A simple minimalist weather application for Android and iOS (yet to be rolled ou
 
 ### Links
 
-Download the Android APK [here](https://github.com/Pragades-Rajagopal/forekast-app/releases/tag/v1.0.0) (v1.0.0)
+Download the Android APK [here](https://github.com/Pragades-Rajagopal/forekast-app/releases/tag/v1.1.0) (v1.1.0)
 
 > Your feedback is much appreciated!
