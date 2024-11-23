@@ -8,6 +8,7 @@ import 'package:forekast_app/services/cities_service.dart';
 import 'package:forekast_app/services/favorites_service.dart';
 import 'package:forekast_app/services/weather_service.dart';
 import 'package:forekast_app/utils/common_function.dart';
+import 'package:forekast_app/utils/common_ui.dart';
 
 class WeatherPage extends StatefulWidget {
   final ValueNotifier<String> selectedCity;
@@ -97,14 +98,9 @@ class _WeatherPageState extends State<WeatherPage> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError) {
-            return Center(
-              child: Text(
-                "unable to provide weather info right now",
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.tertiary,
-                ),
-                textAlign: TextAlign.center,
-              ),
+            return errorWidget(
+              context,
+              message: "unable to provide weather info right now",
             );
           }
           final snapshotData = snapshot.data;
@@ -134,14 +130,7 @@ class _WeatherPageState extends State<WeatherPage> {
             text2: widget.selectedCity.value,
           );
         }
-        return Center(
-          child: Text(
-            'oops',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.tertiary,
-            ),
-          ),
-        );
+        return errorWidget(context);
       },
       future: getData(),
     );
@@ -165,13 +154,12 @@ class _WeatherPageState extends State<WeatherPage> {
           const SizedBox(
             height: 18.0,
           ),
-          Text(
+          commonText(
+            context,
             'additional information',
-            style: TextStyle(
-              fontSize: 18.0,
-              color: Theme.of(context).colorScheme.tertiary,
-              fontWeight: FontWeight.bold,
-            ),
+            fontSize: 18.0,
+            color: Theme.of(context).colorScheme.tertiary,
+            fontWeight: FontWeight.bold,
           ),
           additionalInformation(
             "${data!.wind}$windSpeed ${data!.degree}",
@@ -187,13 +175,12 @@ class _WeatherPageState extends State<WeatherPage> {
           const SizedBox(
             height: 18.0,
           ),
-          Text(
+          commonText(
+            context,
             'daily forecast',
-            style: TextStyle(
-              fontSize: 18.0,
-              color: Theme.of(context).colorScheme.tertiary,
-              fontWeight: FontWeight.bold,
-            ),
+            fontSize: 18.0,
+            color: Theme.of(context).colorScheme.tertiary,
+            fontWeight: FontWeight.bold,
           ),
           const SizedBox(
             height: 4.0,
@@ -205,7 +192,7 @@ class _WeatherPageState extends State<WeatherPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              addToFavButton(),
+              addToFavButton('${data!.cityName}, $country'),
               if (favoriteCount < 8) const SizedBox(width: 18),
               launchMaps(data),
             ],
@@ -235,7 +222,7 @@ class _WeatherPageState extends State<WeatherPage> {
     );
   }
 
-  Widget addToFavButton() {
+  Widget addToFavButton(String city) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(24.0)),
@@ -252,8 +239,7 @@ class _WeatherPageState extends State<WeatherPage> {
                   ),
                   onPressed: () async {
                     if (favoriteButton.value == addToFavText) {
-                      await favoriteWeather
-                          .saveFavorites(widget.selectedCity.value);
+                      await favoriteWeather.saveFavorites(city);
                     }
                     favoriteButton.value = addedFavText;
                   },

@@ -1,16 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:forekast_app/utils/common_function.dart';
+import 'package:forekast_app/utils/common_ui.dart';
 import 'package:lottie/lottie.dart';
-
-Image getIcon(String? icon) {
-  String url = "https://openweathermap.org/img/wn/$icon@4x.png";
-  return Image.network(url);
-}
-
-Image getSmallIcon(String icon) {
-  String url = "https://openweathermap.org/img/wn/$icon@2x.png";
-  return Image.network(url);
-}
 
 Widget getWeatherAnimation(String? condition) {
   String assetPath = 'assets/weather_animations';
@@ -213,15 +205,7 @@ Widget additionalInfoSubWidget(
   String value, {
   String position = 'right',
 }) {
-  var containerTitleStyle = TextStyle(
-    fontSize: Theme.of(context).textTheme.titleMedium?.fontSize,
-    color: Theme.of(context).colorScheme.tertiary,
-  );
-  var containerInfoStyle = TextStyle(
-    fontSize: Theme.of(context).textTheme.bodyLarge?.fontSize,
-    fontWeight: FontWeight.bold,
-    color: Theme.of(context).colorScheme.secondary,
-  );
+  Map<String, TextStyle> styleComponents = cardStyleComponents(context);
   return Container(
     width: 165,
     height: 100,
@@ -247,7 +231,7 @@ Widget additionalInfoSubWidget(
             const SizedBox(width: 8.0),
             Text(
               title,
-              style: containerTitleStyle,
+              style: styleComponents["containerTitleMedium"],
             )
           ],
         ),
@@ -257,7 +241,7 @@ Widget additionalInfoSubWidget(
             Expanded(
               child: Text(
                 value,
-                style: containerInfoStyle,
+                style: styleComponents["containerInfoLarge"],
                 overflow: TextOverflow.ellipsis,
               ),
             )
@@ -269,21 +253,7 @@ Widget additionalInfoSubWidget(
 }
 
 Widget dailyForecast(List data, String temperatureUnit, BuildContext context) {
-  var cardDateStyle = TextStyle(
-    fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
-    // fontWeight: FontWeight.bold,
-    color: Theme.of(context).colorScheme.secondary,
-  );
-  var cardTempStyle = TextStyle(
-    fontSize: Theme.of(context).textTheme.bodyMedium?.fontSize,
-    fontWeight: FontWeight.bold,
-    color: Theme.of(context).colorScheme.secondary,
-  );
-  var cardDescrStyle = TextStyle(
-    fontSize: Theme.of(context).textTheme.bodySmall?.fontSize,
-    color: Theme.of(context).colorScheme.secondary,
-  );
-
+  Map<String, TextStyle> styleComponents = cardStyleComponents(context);
   if (data[0]["err"] == 1) {
     return Container(
       alignment: Alignment.center,
@@ -311,82 +281,64 @@ Widget dailyForecast(List data, String temperatureUnit, BuildContext context) {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
+                shadowColor: Colors.transparent,
                 color: Theme.of(context).colorScheme.primaryContainer,
                 child: SafeArea(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Expanded(
-                        flex: 1,
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            alignment: Alignment.center,
-                            // width: 200.0,
-                            // height: 100.0,
-                            padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-                            child: Text(
-                              data[index]["dt"],
-                              style: cardDateStyle,
-                            ),
+                      commonExpandedWidget(
+                        1,
+                        Alignment.centerLeft,
+                        Alignment.center,
+                        Text(
+                          data[index]["dt"],
+                          style: styleComponents["cardDateSmall"],
+                        ),
+                        padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+                      ),
+                      commonExpandedWidget(
+                        1,
+                        Alignment.centerLeft,
+                        Alignment.center,
+                        SizedBox(
+                          width: 80,
+                          height: 80,
+                          child: FittedBox(
+                            fit: BoxFit.cover,
+                            child: getSmallIcon(data[index]["icon"]),
                           ),
                         ),
+                        padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
                       ),
-                      Expanded(
-                        flex: 1,
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            alignment: Alignment.center,
-                            // margin: const EdgeInsets.symmetric(
-                            //   horizontal: 10,
-                            // ),
-                            child: SizedBox(
-                              width: 80,
-                              height: 80,
-                              child: FittedBox(
-                                fit: BoxFit.cover,
-                                child: getSmallIcon(data[index]["icon"]),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 3,
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Container(
-                            alignment: Alignment.centerRight,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              // vertical: 20,
-                            ),
-                            child: Column(
+                      commonExpandedWidget(
+                        3,
+                        Alignment.centerLeft,
+                        Alignment.centerRight,
+                        Column(
+                          children: [
+                            Row(
                               children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      "${data[index]["tempMax"]} / ${data[index]["tempMin"]}$temperatureUnit",
-                                      style: cardTempStyle,
-                                    ),
-                                  ],
+                                Text(
+                                  "${data[index]["tempMax"]} / ${data[index]["tempMin"]}$temperatureUnit",
+                                  style: styleComponents["cardTempMediumBold"],
                                 ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        data[index]["description"],
-                                        style: cardDescrStyle,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                )
                               ],
                             ),
-                          ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    data[index]["description"],
+                                    style: styleComponents["cardDescrSmall"],
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            )
+                          ],
                         ),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                       ),
                     ],
                   ),
@@ -398,4 +350,27 @@ Widget dailyForecast(List data, String temperatureUnit, BuildContext context) {
       ),
     );
   }
+}
+
+Expanded commonExpandedWidget(
+  int flex,
+  Alignment rootAlignment,
+  Alignment childAlignment,
+  Widget child, {
+  EdgeInsets? padding,
+}) {
+  padding ??= const EdgeInsets.all(0);
+  return Expanded(
+    flex: flex,
+    child: Align(
+      alignment: rootAlignment,
+      child: Container(
+        alignment: childAlignment,
+        // width: 200.0,
+        // height: 100.0,
+        padding: padding,
+        child: child,
+      ),
+    ),
+  );
 }

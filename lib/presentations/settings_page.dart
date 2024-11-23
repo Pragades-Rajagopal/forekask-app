@@ -5,6 +5,7 @@ import 'package:forekast_app/presentations/landing_page.dart';
 import 'package:forekast_app/presentations/widgets/common_widgets.dart';
 import 'package:forekast_app/presentations/widgets/dropdown_bar.dart';
 import 'package:forekast_app/presentations/widgets/gesture_button.dart';
+import 'package:forekast_app/utils/common_ui.dart';
 import 'package:get/get.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -63,12 +64,11 @@ class _SettingsPageState extends State<SettingsPage> {
         automaticallyImplyLeading: true,
         elevation: 0,
         backgroundColor: Theme.of(context).colorScheme.surface,
-        title: const Text(
+        title: commonText(
+          context,
           'settings',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 20.0,
-          ),
+          fontWeight: FontWeight.bold,
+          fontSize: 20.0,
         ),
         centerTitle: true,
       ),
@@ -82,11 +82,10 @@ class _SettingsPageState extends State<SettingsPage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  commonText(
+                    context,
                     'app theme',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                    ),
+                    fontSize: 18.0,
                   ),
                   const SizedBox(height: 8),
                   SizedBox(
@@ -101,11 +100,10 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ),
                   const SizedBox(height: 28.0),
-                  const Text(
+                  commonText(
+                    context,
                     'units',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                    ),
+                    fontSize: 18.0,
                   ),
                   const SizedBox(height: 8),
                   SizedBox(
@@ -125,18 +123,17 @@ class _SettingsPageState extends State<SettingsPage> {
                       thickness: 0.5,
                     ),
                   ),
-                  const Text(
+                  commonText(
+                    context,
                     'reset current location',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                    ),
+                    fontSize: 18.0,
                   ),
                   const SizedBox(height: 8),
-                  Text(
+                  commonText(
+                    context,
                     'This will reset the current location from the app. If the weather information is not available for your current location, you can choose the nearest location manually',
-                    style: TextStyle(
-                        fontSize: 14.0,
-                        color: Theme.of(context).colorScheme.tertiary),
+                    fontSize: 14.0,
+                    color: Theme.of(context).colorScheme.tertiary,
                   ),
                   const SizedBox(height: 18),
                   Center(

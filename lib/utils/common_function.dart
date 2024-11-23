@@ -134,3 +134,33 @@ Future<String> countryNameToCodeConvertor(String value) async {
   }
   return value;
 }
+
+/// Converts country code to country name
+///
+/// Eg: `NO` > `Norway`
+Future<String> getCountryNameForCode(String code) async {
+  Map<String, String>? ccMap = await CitiesData().getCountryCodeMap();
+  if (ccMap == null) {
+    return code;
+  }
+  return ccMap[code] ?? code;
+}
+
+/// Splits "city, country" to array
+List<String> getParts(String value) {
+  return value.toString().contains(', ')
+      ? value.toString().split(', ')
+      : [value, ''];
+}
+
+/// Downloads weather icon from the internet
+Image getIcon(String? icon) {
+  String url = "https://openweathermap.org/img/wn/$icon@4x.png";
+  return Image.network(url);
+}
+
+/// Downloads weather icon from the internet
+Image getSmallIcon(String icon) {
+  String url = "https://openweathermap.org/img/wn/$icon@2x.png";
+  return Image.network(url);
+}

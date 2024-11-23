@@ -7,6 +7,7 @@ import 'package:forekast_app/presentations/widgets/cities_search_sheet.dart';
 import 'package:forekast_app/presentations/widgets/common_widgets.dart';
 import 'package:forekast_app/presentations/widgets/gesture_button.dart';
 import 'package:forekast_app/services/location_service.dart';
+import 'package:forekast_app/utils/common_ui.dart';
 import 'package:get/get.dart';
 
 class LandingPage extends StatefulWidget {
@@ -74,13 +75,12 @@ class _LandingPageState extends State<LandingPage> {
                         ),
                       ),
                       const SizedBox(height: 30.0),
-                      Text(
+                      commonText(
+                        context,
                         'forekast',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 24.0,
+                        fontWeight: FontWeight.bold,
                       ),
                       const SizedBox(height: 30.0),
                       GestureButton(
